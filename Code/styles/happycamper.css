@@ -1,0 +1,222 @@
+body {
+  font-family: arial, sans-serif;
+  font-size: 9pt;
+  color: #333;
+}
+div.viewer {
+  width: 600px;
+  height: 350px;
+}
+div.viewer div.rooms {
+  width: 150px;
+  float: left;
+  position: relative;
+}
+div.viewer div.rooms div.header {
+  background: #fff;
+  padding: 10px 0;
+  height: 30px;
+}
+div.viewer div.rooms div.settings, div.viewer div.rooms div.room {
+  padding: 5px 5px 5px 18px;
+}
+div.viewer div.rooms div.settings {
+  border-top: 1px solid #eae59d;
+  border-bottom: 1px solid #eae59d;
+  border-right: 1px solid #eae59d;
+  background: #fcf8bb url("../images/settings.png") no-repeat 3px 7px;
+  color: #726c24;
+  cursor: pointer;
+}
+div.viewer div.rooms div.settings:hover {
+  background-color: #f9f5b1;
+}
+div.viewer div.rooms div.list {
+  height: 287px;
+  overflow: hidden;
+  position: relative;
+}
+div.viewer div.rooms div.list div.scrollbox {
+  position: absolute;
+}
+div.viewer div.rooms div.list div.scroll-up, div.viewer div.rooms div.list div.scroll-down {
+  width: 150px;
+  height: 10px;
+  opacity: 0;
+}
+div.viewer div.rooms div.list div.scroll-up.active, div.viewer div.rooms div.list div.scroll-down.active {
+  opacity: 0.5;
+  cursor: pointer;
+}
+div.viewer div.rooms div.list div.scroll-up.active:hover, div.viewer div.rooms div.list div.scroll-down.active:hover {
+  opacity: 1.0;
+}
+div.viewer div.rooms div.list div.scroll-up {
+  background: url("../images/scroll-up.png") no-repeat 50% 2px;
+}
+div.viewer div.rooms div.list div.scroll-down {
+  background: url("../images/scroll-down.png") no-repeat 50% 0;
+  position: absolute;
+  bottom: 0;
+}
+div.viewer div.rooms div.room {
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+div.viewer div.rooms div.room.active {
+  background: #f1f1f1 url("../images/active.png") no-repeat 3px 8px;
+}
+div.viewer div.rooms div.room.inactive {
+  background: #f1f1f1 url("../images/inactive.png") no-repeat 3px 8px;
+  color: #888;
+}
+div.viewer div.rooms div.room.locked {
+  background: #f1f1f1 url("../images/lock.png") no-repeat 3px 8px;
+}
+div.viewer div.rooms div.room:hover {
+  background-color: #eaeaea !important;
+}
+div.viewer div.rooms div.room.selected {
+  border: 0;
+  background-color: #fff;
+  cursor: default;
+}
+div.viewer div.rooms div.room.selected:hover {
+  background-color: #fff !important;
+}
+div.viewer div.rooms div.room.last {
+  border-bottom: 1px solid #ddd;
+}
+div.viewer div.content {
+  float: left;
+  width: 415px;
+  margin: 50px 0 0 20px;
+}
+div.viewer div.content ul.tabs li {
+  list-style: none;
+  display: inline-block;
+  padding: 5px 10px 5px 25px;
+  cursor: pointer;
+}
+div.viewer div.content ul.tabs li.chat {
+  background: url("../images/chat.png") no-repeat 8px 5px;
+}
+div.viewer div.content ul.tabs li.starred {
+  background: url("../images/star.png") no-repeat 8px 4px;
+}
+div.viewer div.content ul.tabs li.selected {
+  background-color: #f1f1f1;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #e9e9e9;
+}
+div.viewer div.content ul.tabs li.selected:hover {
+  background-color: #f1f1f1;
+  cursor: default;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #e9e9e9;
+}
+div.viewer div.content div.tab-content {
+  background: #f1f1f1;
+  height: 255px;
+  padding: 10px;
+  border-top: 1px solid #e9e9e9;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-top: -1px;
+}
+div.viewer div.content div.tab-content div.group {
+  background: #fff;
+  height: 200px;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+div.viewer div.content div.tab-content div.group div.conversation {
+  float: left;
+  padding: 5px;
+  width: 383px;
+  overflow: auto;
+  height: 190px;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.activity {
+  padding: 3px;
+  margin-bottom: 2px;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.activity span.text {
+  width: 300px;
+  float: left;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.activity span.time {
+  float: right;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.presence {
+  background: #fcf8bb;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.who {
+  background: #f3f3f3;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.message span.text {
+  margin-left: 10px;
+}
+div.viewer div.content div.tab-content div.group div.conversation::-webkit-scrollbar {
+  height: 0.5ex;
+  width: 8px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
+}
+div.viewer div.content div.tab-content div.group div.conversation::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
+  border: 1px solid #ccc;
+}
+div.viewer div.content div.tab-content div.group div.conversation::-webkit-scrollbar-thumb:hover {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+div.viewer div.content div.tab-content div.group div.sidebar {
+  float: right;
+}
+div.viewer div.content div.tab-content div.send {
+  margin-top: 10px;
+  padding: 5px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+div.viewer div.content div.tab-content div.send textarea {
+  overflow: hidden;
+  border: 0;
+  outline: 0;
+  float: left;
+  margin-right: 5px;
+  width: 314px;
+  resize: none;
+}
+div.clear {
+  clear: both;
+}
+button {
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font: 10pt/100%;
+  padding: .3em 1em .3em;
+  -webkit-border-radius: .5em;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+button.white {
+  color: #606060;
+  border: solid 1px #b7b7b7;
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#ededed));
+}
+button.white:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#dcdcdc));
+}
