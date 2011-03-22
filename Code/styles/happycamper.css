@@ -31,33 +31,29 @@ div.viewer div.rooms div.settings {
 div.viewer div.rooms div.settings:hover {
   background-color: #f9f5b1;
 }
+div.viewer div.rooms div.scroll-up, div.viewer div.rooms div.scroll-down {
+  width: 150px;
+  height: 10px;
+  opacity: 0;
+  margin-top: 3px;
+}
+div.viewer div.rooms div.scroll-up.active, div.viewer div.rooms div.scroll-down.active {
+  opacity: 0.5;
+  cursor: pointer;
+}
+div.viewer div.rooms div.scroll-up.active:hover, div.viewer div.rooms div.scroll-down.active:hover {
+  opacity: 1.0;
+}
+div.viewer div.rooms div.scroll-up {
+  background: url("../images/scroll-up.png") no-repeat 50% 2px;
+}
+div.viewer div.rooms div.scroll-down {
+  background: url("../images/scroll-down.png") no-repeat 50% 0;
+}
 div.viewer div.rooms div.list {
   height: 287px;
   overflow: hidden;
   position: relative;
-}
-div.viewer div.rooms div.list div.scrollbox {
-  position: absolute;
-}
-div.viewer div.rooms div.list div.scroll-up, div.viewer div.rooms div.list div.scroll-down {
-  width: 150px;
-  height: 10px;
-  opacity: 0;
-}
-div.viewer div.rooms div.list div.scroll-up.active, div.viewer div.rooms div.list div.scroll-down.active {
-  opacity: 0.5;
-  cursor: pointer;
-}
-div.viewer div.rooms div.list div.scroll-up.active:hover, div.viewer div.rooms div.list div.scroll-down.active:hover {
-  opacity: 1.0;
-}
-div.viewer div.rooms div.list div.scroll-up {
-  background: url("../images/scroll-up.png") no-repeat 50% 2px;
-}
-div.viewer div.rooms div.list div.scroll-down {
-  background: url("../images/scroll-down.png") no-repeat 50% 0;
-  position: absolute;
-  bottom: 0;
 }
 div.viewer div.rooms div.room {
   border-top: 1px solid #ddd;
@@ -107,6 +103,9 @@ div.viewer div.content ul.tabs li.chat {
 div.viewer div.content ul.tabs li.starred {
   background: url("../images/star.png") no-repeat 8px 4px;
 }
+div.viewer div.content ul.tabs li.files {
+  background: url("../images/files.png") no-repeat 8px 4px;
+}
 div.viewer div.content ul.tabs li.selected {
   background-color: #f1f1f1;
   border-left: 1px solid #e9e9e9;
@@ -155,6 +154,7 @@ div.viewer div.content div.tab-content div.group div.conversation div.activity s
 }
 div.viewer div.content div.tab-content div.group div.conversation div.activity span.time {
   float: right;
+  color: #999;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.presence {
   background: #fcf8bb;
@@ -162,8 +162,20 @@ div.viewer div.content div.tab-content div.group div.conversation div.presence {
 div.viewer div.content div.tab-content div.group div.conversation div.who {
   background: #f3f3f3;
 }
-div.viewer div.content div.tab-content div.group div.conversation div.message span.text {
-  margin-left: 10px;
+div.viewer div.content div.tab-content div.group div.conversation div.message span.star {
+  opacity: 0;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.message:hover span.star {
+  opacity: 1.0;
+  background: url("../images/star-inactive.png") no-repeat;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.message.starred span.star {
+  opacity: 1.0;
+  background: url("../images/star.png") no-repeat;
 }
 div.viewer div.content div.tab-content div.group div.conversation::-webkit-scrollbar {
   height: 0.5ex;
@@ -197,6 +209,27 @@ div.viewer div.content div.tab-content div.send textarea {
   margin-right: 5px;
   width: 314px;
   resize: none;
+}
+div.viewer div.content.join-room {
+  text-align: center;
+}
+div.viewer div.content.join-room span {
+  font-size: 12pt;
+  cursor: default;
+}
+div.blank-slate {
+  width: 190px;
+  padding: 20px;
+  text-align: center;
+}
+div.blank-slate span {
+  font-size: 12pt;
+  display: block;
+  cursor: default;
+  margin-bottom: 10px;
+}
+div.blank-slate img {
+  margin-bottom: 20px;
 }
 div.clear {
   clear: both;

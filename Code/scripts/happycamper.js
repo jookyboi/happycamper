@@ -1,15 +1,40 @@
 var happycamper = {};
 
-happycamper.rooms = function() {
+happycamper.state = {
+    selectedRoomId: -1
+};
+
+happycamper.rooms = function(rooms) {
+    var $rooms = $("div.rooms");
     var $roomsList = $("div.rooms div.list");
+    var $scrollbox = $roomsList.find("div.scrollbox");
     var visibleRooms, activeRooms, inactiveRooms, lockedRooms;
 
-    // do ajax
+    // on initialize
+    templateRooms();
+    joinDefaultRoom();
+    wireUpDownButtons();
+
     function templateRooms() {
 
     }
 
+    function joinDefaultRoom() {
+        
+    }
+
+    function wireUpDownButtons() {
+        if (buttonsNecessary()) {
+            $rooms.find("div.scroll-up").css("opacity", 1.0);
+            $rooms.find("div.scroll-down").css("opacity", 1.0);
+        }
+    }
+
     // utilities
+    function buttonsNecessary() {
+        return $scrollbox.height() > $roomsList.height();
+    }
+
     function getInactiveRooms() {
        var activeRoomIds = jLinq.from(activeRooms)
             .select(function(room) {
@@ -28,113 +53,27 @@ happycamper.rooms = function() {
                 return room.locked
             }).select();
     }
-
 };
 
 $(function() {
-    happycamper.rooms();
-});
-
-
-// mock data
-var mockRoom1 = {
-    "rooms": [{
-        "name": "Room 2",
-        "created_at": "2011/03/12 05:08:11 +0000",
-        "updated_at": "2011/03/12 05:08:11 +0000",
-        "topic": "",
-        "id": 386538,
-        "membership_limit": 4,
-        "locked": false
-    }]
-};
-
-var mockRooms = {
-    "rooms": [{
-        "name": "Room 1",
-        "created_at": "2011/03/08 18:17:53 +0000",
-        "updated_at": "2011/03/08 18:17:53 +0000",
-        "topic": null,
-        "id": 385256,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Test Room",
-        "created_at": "2011/03/08 18:18:10 +0000",
-        "updated_at": "2011/03/10 14:09:28 +0000",
-        "topic": "",
-        "id": 385257,
-        "membership_limit": 4,
-        "locked": true
-    }, {
-        "name": "Room 2",
-        "created_at": "2011/03/12 05:08:11 +0000",
-        "updated_at": "2011/03/12 05:08:11 +0000",
-        "topic": "",
-        "id": 386538,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Room 3",
-        "created_at": "2011/03/12 05:08:15 +0000",
-        "updated_at": "2011/03/12 05:08:15 +0000",
-        "topic": "",
-        "id": 386539,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Room 4",
-        "created_at": "2011/03/12 05:08:19 +0000",
-        "updated_at": "2011/03/12 05:08:19 +0000",
-        "topic": "",
-        "id": 386540,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Room 5",
-        "created_at": "2011/03/12 05:08:23 +0000",
-        "updated_at": "2011/03/12 05:08:23 +0000",
-        "topic": "",
-        "id": 386541,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Room 6",
-        "created_at": "2011/03/12 05:08:27 +0000",
-        "updated_at": "2011/03/12 05:08:27 +0000",
-        "topic": "",
-        "id": 386542,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Really long name for room 7",
-        "created_at": "2011/03/12 05:08:35 +0000",
-        "updated_at": "2011/03/12 05:08:35 +0000",
-        "topic": "",
-        "id": 386543,
-        "membership_limit": 4,
-        "locked": false
-    }, {
-        "name": "Room 8",
-        "created_at": "2011/03/12 05:08:39 +0000",
-        "updated_at": "2011/03/12 05:08:39 +0000",
-        "topic": "",
-        "id": 386544,
-        "membership_limit": 4,
-        "locked": false
-    }]
-};
-
-var activeRoomIds = jLinq.from(mockRoom1.rooms)
-    .select(function(room) {
-        return room.id;
+    var executor = new Camper.Executor({
+        url: "ruijiang.campfirenow.com",
+        apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
     });
 
-console.log(activeRoomIds);
+    executor.rooms.listAll(function(roomsData) {
+        var allRooms = jLinq.from(roomsData.rooms)
+            .select(function(room) {
+                return {
+                    createdAt: Date.parse(room.created_at),
+                    id: room.id,
+                    locked: room.locked,
+                    name: room.name,
+                    topic: room.topic,
+                    updatedAt: Date.parse(room.updated_at)
+                };
+            });
 
-var inactiveRooms = jLinq.from(mockRooms.rooms)
-    .where(function(room) {
-        return ($.inArray(room.id, activeRoomIds) === -1 && !room.locked)
-    }).select();
-
-console.log(inactiveRooms)
+            happycamper.rooms(allRooms);
+        });
+});

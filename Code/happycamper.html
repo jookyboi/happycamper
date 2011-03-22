@@ -7,6 +7,7 @@
 
     <script type="text/javascript" src="scripts/plugins/jquery-1.5.1.min.js"></script>
     <script type="text/javascript" src="scripts/plugins/jlinq.min.js"></script>
+    <script type="text/javascript" src="scripts/camper.js"></script>
     <script type="text/javascript" src="scripts/happycamper.js"></script>
 
     <script id="room-template" type="text/x-jquery-tmpl">
@@ -18,6 +19,18 @@
 </head>
 <body>
 
+<div class="blank-slate no-api" style="display: none;">
+    <img src="images/logo.png" />
+    <span>To start, we'll need your Campfire account info</span>
+    <button class="white">Fill in account info</button>
+</div>
+
+<div class="blank-slate no-rooms" style="display: none;">
+    <img src="images/logo.png" />
+    <span>You are not in any Campfire rooms</span>
+    <button class="white">Create a room</button>
+</div>
+
 <div class="viewer">
     <div class="rooms">
         <div class="header">
@@ -26,8 +39,8 @@
         <div class="settings">
             Settings
         </div>
+        <div class="scroll-up"></div>
         <div class="list">
-            <div class="scroll-up"></div>
             <div class="scrollbox">
                 <div class="room active">
                     <span class="icon"></span>
@@ -57,16 +70,28 @@
                     <span class="icon"></span>
                     <span class="name">My last room</span>
                 </div>
+                <div class="room inactive last">
+                    <span class="icon"></span>
+                    <span class="name">My last room</span>
+                </div>
+                <div class="room inactive last">
+                    <span class="icon"></span>
+                    <span class="name">My last room also has a very long name</span>
+                </div>
             </div>
-            <div class="scroll-down"></div>
         </div>
-
+        <div class="scroll-down"></div>
     </div>
 
-    <div class="content">
+    <div class="content join-room">
+        <span>Click on a room from the list to join</span>
+    </div>
+
+    <div class="content" style="display: none;">
         <ul class="tabs">
             <li class="chat selected">Chat</li>
             <li class="starred">Starred</li>
+            <li class="files"><a href="">Files</a></li>
         </ul>
         <div class="tab-content chat">
             <div class="group">
@@ -81,54 +106,68 @@
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Hey, who is here</span>
                         <span class="time">11:23 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">This is my super long message which will go over the edge for sure</span>
                         <span class="time">11:23 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
                     <div class="activity message">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
-                    <div class="activity message">
+                    <div class="activity message starred">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
                     </div>
-                    <div class="activity message">
+                    <div class="activity message starred">
+                        <span class="star"></span>
                         <span class="text">Is anybody listening to me?</span>
                         <span class="time">11:25 AM</span>
                         <div class="clear"></div>
+                    </div>
+                    <div class="activity">
+                        <span class="paste"></span>
+
                     </div>
                 </div>
                 <div class="sidebar">
