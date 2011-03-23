@@ -43,6 +43,10 @@ var Camper = Camper || {};
             execute(routes.rooms.listAll(), "GET", callback);
         };
 
+        this.rooms.presentRooms = function(callback) {
+            execute(routes.rooms.presentRooms(), "GET", callback);
+        };
+
         //// Private functions
         function execute(routeUrl, requestType, callback) {
             var dummyPasword = "x";

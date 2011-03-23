@@ -7,11 +7,12 @@
 
     <script type="text/javascript" src="scripts/plugins/jquery-1.5.1.min.js"></script>
     <script type="text/javascript" src="scripts/plugins/jlinq.min.js"></script>
+    <script type="text/javascript" src="scripts/plugins/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="scripts/camper.js"></script>
     <script type="text/javascript" src="scripts/happycamper.js"></script>
 
     <script id="room-template" type="text/x-jquery-tmpl">
-        <div class="room active">
+        <div class="room ${state}">
             <span class="icon"></span>
             <span class="name">${name}</span>
         </div>
@@ -41,44 +42,7 @@
         </div>
         <div class="scroll-up"></div>
         <div class="list">
-            <div class="scrollbox">
-                <div class="room active">
-                    <span class="icon"></span>
-                    <span class="name">My awesome room</span>
-                </div>
-                <div class="room active">
-                    <span class="icon"></span>
-                    <span class="name">My second room with a super duper long name</span>
-                </div>
-                <div class="room active selected">
-                    <span class="icon"></span>
-                    <span class="name">My third room</span>
-                </div>
-                <div class="room locked">
-                    <span class="icon"></span>
-                    <span class="name">My third room</span>
-                </div>
-                <div class="room locked">
-                    <span class="icon"></span>
-                    <span class="name">My third room</span>
-                </div>
-                <div class="room locked">
-                    <span class="icon"></span>
-                    <span class="name">My third room</span>
-                </div>
-                <div class="room inactive last">
-                    <span class="icon"></span>
-                    <span class="name">My last room</span>
-                </div>
-                <div class="room inactive last">
-                    <span class="icon"></span>
-                    <span class="name">My last room</span>
-                </div>
-                <div class="room inactive last">
-                    <span class="icon"></span>
-                    <span class="name">My last room also has a very long name</span>
-                </div>
-            </div>
+            <div class="scrollbox"></div>
         </div>
         <div class="scroll-down"></div>
     </div>
