@@ -61,18 +61,25 @@ happycamper.rooms = function() {
             if (!$(this).hasClass("active"))
                 return;
 
+            // prevent scrolling past the top
+            var distanceToScroll = Math.min(-(scrollboxMarginTop()), (2* ROOM_HEIGHT));
+
             $scrollbox.animate({
-                marginTop: '+=' + (2* ROOM_HEIGHT)
-            }, 300);
+                marginTop: '+=' + distanceToScroll
+            }, 300, activateUpDownButtons);
         });
 
         scrollDown.click(function() {
             if (!$(this).hasClass("active"))
                 return;
 
+            // prevent scrolling past the end
+            var distanceToBottom = -(scrollableDifference() - scrollboxMarginTop());
+            var distanceToScroll = Math.min(distanceToBottom, 2 * ROOM_HEIGHT);
+
             $scrollbox.animate({
-                marginTop: '-=' + (2 * ROOM_HEIGHT)
-            }, 300);
+                marginTop: '-=' + distanceToScroll
+            }, 300, activateUpDownButtons);
         });
     }
 
@@ -82,22 +89,35 @@ happycamper.rooms = function() {
 
         if (topScrollable()) {
             scrollUp.addClass("active");
+        } else {
+            scrollUp.removeClass("active");
         }
 
         if (bottomScrollable()) {
             scrollDown.addClass("active");
+        } else {
+            scrollDown.removeClass("active");
         }
     }
 
     function topScrollable() {
-        return $scrollbox.css("marginTop").replace("px") === 0;
+        var marginTop = scrollboxMarginTop();
+        return marginTop < 0;
     }
 
     function bottomScrollable() {
-        return true;
+        return scrollboxMarginTop() > scrollableDifference();
     }
 
     // utilities
+    function scrollboxMarginTop() {
+        return parseInt($scrollbox.css("marginTop").replace("px"));
+    }
+
+    function scrollableDifference() {
+        return $roomsList.height() - $scrollbox.height();
+    }
+
     function buttonsNecessary() {
         return $scrollbox.height() > $roomsList.height();
     }

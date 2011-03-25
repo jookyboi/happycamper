@@ -77,8 +77,7 @@ happycamper.background = function() {
         // must check for string equality here
         if (JSON.stringify(newState) === JSON.stringify(happycamper.state))
             return;
-
-        console.log("change handle");
+        
         happycamper.state = newState;
         saveJson("state", happycamper.state);
     }
