@@ -1,10 +1,12 @@
 var happycamper = {};
 
-happycamper.state = {
-    selectedRoomId: -1
-};
+happycamper.settings = {};
+happycamper.state = {};
 
-happycamper.rooms = function(visibleRooms, activeRooms) {
+happycamper.rooms = function() {
+    var visibleRooms = happycamper.state.visibleRooms;
+    var activeRooms = happycamper.state.activeRooms;
+
     var $rooms = $("div.rooms");
     var $roomsList = $("div.rooms div.list");
     var $scrollbox = $roomsList.find("div.scrollbox");
@@ -17,6 +19,8 @@ happycamper.rooms = function(visibleRooms, activeRooms) {
 
     // templating
     function templateRooms() {
+        $scrollbox.html("");
+
         templateActiveRooms();
         templateLockedRooms();
         templateInactiveRooms();
@@ -48,6 +52,10 @@ happycamper.rooms = function(visibleRooms, activeRooms) {
         var scrollDown = $rooms.find("div.scroll-down");
 
         activateUpDownButtons();
+
+        // prevent double binding
+        scrollUp.unbind("click");
+        scrollDown.unbind("click");
 
         scrollUp.click(function() {
             if (!$(this).hasClass("active"))
@@ -121,36 +129,43 @@ happycamper.rooms = function(visibleRooms, activeRooms) {
 };
 
 $(function() {
-    var executor = new Camper.Executor({
-        url: "ruijiang.campfirenow.com",
-        apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
-    });
+    // use whatever is in the latest localStorage
+    refreshLoop();
+    happycamper.rooms();
 
-    executor.rooms.listAll(function(roomsData) {
-        var visibleRooms = jLinq.from(roomsData.rooms)
-            .select(getFormattedRoom);
+    setInterval(function() {
+        refreshLoop();
+    }, (happycamper.settings.refreshInterval * 1000));
 
-        // execute in order since we need both visible and active
-        executor.rooms.presentRooms(function(roomsData) {
-            var activeRooms = jLinq.from(roomsData.rooms)
-                .select(function(room) {
-                    return getFormattedRoom(room, { state: "active" });
-                });
-            
-            happycamper.rooms(visibleRooms, activeRooms);
-        });
-    });
+    function refreshLoop() {
+        var oldState = $.extend(true, {}, happycamper.state);
 
-    function getFormattedRoom(room, properties) {
-        var roomJson = {
-            createdAt: Date.parse(room.created_at),
-            id: room.id,
-            locked: room.locked,
-            name: room.name,
-            topic: room.topic,
-            updatedAt: Date.parse(room.updated_at)
-        };
+        happycamper.state = loadJson("state");
+        happycamper.settings = loadJson("settings");
 
-        return $.extend(roomJson, properties);
+        if (JSON.stringify(oldState) !== JSON.stringify(happycamper.state))
+            handleChange(oldState);
+    }
+
+    function handleChange(oldState) {
+        var state = happycamper.state;
+
+        if (JSON.stringify(state.visibleRooms) !== JSON.stringify(oldState.visibility) ||
+            JSON.stringify(state.activeRooms) !== JSON.stringify(oldState.activeRooms)) {
+            happycamper.rooms();
+        }
+    }
+
+    // utilities
+    function saveJson(key, json) {
+        localStorage[key] = JSON.stringify(json);
+    }
+
+    function loadJson(key) {
+        var value = localStorage[key];
+        if (value === undefined || value === null)
+            return null;
+
+        return JSON.parse(value);
     }
 });

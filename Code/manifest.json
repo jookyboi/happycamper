@@ -16,5 +16,6 @@
     	"tabs",
 		"http://*/*",
 		"https://*/*"
-	]
+	],
+    "background_page": "background.html"
 }
