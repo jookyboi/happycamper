@@ -57,6 +57,10 @@ happycamper.rooms = function() {
         scrollUp.unbind("click");
         scrollDown.unbind("click");
 
+        // prevent double scrolling
+        var upScrolling = false;
+        var downScrolling = false;
+
         scrollUp.click(function() {
             if (!$(this).hasClass("active"))
                 return;
@@ -64,9 +68,16 @@ happycamper.rooms = function() {
             // prevent scrolling past the top
             var distanceToScroll = Math.min(-(scrollboxMarginTop()), (2* ROOM_HEIGHT));
 
-            $scrollbox.animate({
-                marginTop: '+=' + distanceToScroll
-            }, 300, activateUpDownButtons);
+            if (!upScrolling) {
+                upScrolling = true;
+
+                $scrollbox.animate({
+                    marginTop: '+=' + distanceToScroll
+                }, 300, function() {
+                    upScrolling = false;
+                    activateUpDownButtons();
+                });
+            }
         });
 
         scrollDown.click(function() {
@@ -77,9 +88,16 @@ happycamper.rooms = function() {
             var distanceToBottom = -(scrollableDifference() - scrollboxMarginTop());
             var distanceToScroll = Math.min(distanceToBottom, 2 * ROOM_HEIGHT);
 
-            $scrollbox.animate({
-                marginTop: '-=' + distanceToScroll
-            }, 300, activateUpDownButtons);
+            if (!downScrolling) {
+                downScrolling = true;
+
+                $scrollbox.animate({
+                    marginTop: '-=' + distanceToScroll
+                }, 300, function() {
+                    downScrolling = false;
+                    activateUpDownButtons();
+                });
+            }
         });
     }
 
