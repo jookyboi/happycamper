@@ -5,7 +5,6 @@ body {
 }
 div.viewer {
   width: 600px;
-  height: 350px;
 }
 div.viewer div.rooms {
   width: 150px;
@@ -216,6 +215,10 @@ div.viewer div.content.join-room {
 div.viewer div.content.join-room span {
   font-size: 12pt;
   cursor: default;
+}
+div.viewer div.content.joining {
+  background: url("../images/ajax.gif") no-repeat 50% 50%;
+  height: 300px;
 }
 div.blank-slate {
   width: 190px;

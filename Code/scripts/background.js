@@ -6,7 +6,9 @@ happycamper.settings = {
 
 happycamper.state = {
     visibleRooms: [],
-    activeRooms: []
+    activeRooms: [],
+    openRoomId: -1,
+    activeRoomStates: []
 };
 
 happycamper.background = function() {
@@ -26,6 +28,22 @@ happycamper.background = function() {
         }, (happycamper.settings.refreshInterval * 1000));
     };
 
+    function initSettings() {
+        if (localStorage["settings"] === undefined) {
+            saveJson("settings", happycamper.settings);
+        } else {
+            happycamper.settings = loadJson("settings");
+        }
+    }
+
+    function refreshLoop() {
+        // deep copy
+        var newState = $.extend(true, {}, happycamper.state);
+        setVisibleActiveRooms(newState);
+
+        setActiveRoomStates();
+    }
+
     function setVisibleActiveRooms(newState) {
         executor.rooms.listAll(function(roomsData) {
             var visibleRooms = jLinq.from(roomsData.rooms)
@@ -41,7 +59,7 @@ happycamper.background = function() {
                 newState.visibleRooms = visibleRooms;
                 newState.activeRooms = activeRooms;
 
-                handleStateChange(newState);
+                handleRoomsListChange(newState);
             });
         });
 
@@ -59,30 +77,94 @@ happycamper.background = function() {
         }
     }
 
-    function initSettings() {
-        if (localStorage["settings"] === undefined) {
-            saveJson("settings", happycamper.settings);
-        } else {
-            happycamper.settings = loadJson("settings");
-        }
-    }
-
-    function refreshLoop() {
-        // deep copy
-        var newState = $.extend(true, {}, happycamper.state);
-        setVisibleActiveRooms(newState);
-    }
-
-    function handleStateChange(newState) {
+    function handleRoomsListChange(newState) {
         // must check for string equality here
-        if (JSON.stringify(newState) === JSON.stringify(happycamper.state))
+        if (JSON.stringify(newState.visibleRooms) === JSON.stringify(happycamper.state.visibleRooms) &&
+            JSON.stringify(newState.activeRooms) === JSON.stringify(happycamper.state.activeRooms)) {
             return;
-        
+        }
+
         happycamper.state = newState;
+        saveJson("state", happycamper.state);
+
+        callPopupFunction(function(popup) {
+            popup.happycamper.refresh.roomsList();
+        });
+    }
+
+    function setActiveRoomStates() {
+        var state = happycamper.state;
+
+        if (state.activeRooms === undefined) {
+            // hasn't been populated yet
+            return;
+        }
+
+        for (var index = 0, length = state.activeRooms.length; index < length; index++) {
+            var room = state.activeRooms[index];
+            var roomId = getRoomId(room); // otherwise, we will have a really long array
+
+            if (state.activeRoomStates[roomId] === undefined) {
+                state.activeRoomStates[roomId] = {
+                    users: [],
+                    messages: []
+                };
+            }
+
+            getUsersForRoom(room);
+            getMessagesForRoom(room);
+        }
+
         saveJson("state", happycamper.state);
     }
 
+    function getUsersForRoom(room) {
+        var state = happycamper.state;
+    }
+
+    function getMessagesForRoom(room) {
+        var roomState = happycamper.state.activeRoomStates[getRoomId(room)];
+        var arguments = {};
+        var fullRefresh = true;
+
+        if (roomState.messages.length > 0) {
+            // don't need full refresh
+            fullRefresh = false;
+
+            var lastMessage = jLinq.from(roomState.messages)
+                .sort("id")
+                .last();
+
+            arguments.since_message_id = lastMessage.id;
+        }
+
+        executor.rooms.recentMessages(room.id, arguments, function(messagesData) {
+            if (fullRefresh) {
+                roomState.messages = messagesData.messages;
+            } else {
+                roomState.messages = roomState.messages.concat(messagesData.messages);
+                showMessageNotifications(messagesData.messages);
+            }
+
+            console.log(roomState.messages);
+        });
+    }
+
+    // notifications
+    function showMessageNotifications(newMessages) {
+        
+    }
+
     // utilities
+    function callPopupFunction(callback) {
+        var popup = chrome.extension.getViews({type: "popup"});
+        console.log(popup);
+
+        if (popup.length > 0) {
+            callback(popup[0]);
+        }
+    }
+
     function saveJson(key, json) {
         localStorage[key] = JSON.stringify(json);
     }
@@ -93,6 +175,10 @@ happycamper.background = function() {
             return null;
 
         return JSON.parse(value);
+    }
+
+    function getRoomId(room) {
+        return "room_" + room.id;
     }
 };
 

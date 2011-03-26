@@ -13,7 +13,7 @@
     <script type="text/javascript" src="scripts/happycamper.js"></script>
 
     <script id="room-template" type="text/x-jquery-tmpl">
-        <div class="room ${state}">
+        <div class="room ${state}" roomid="${id}">
             <span class="icon"></span>
             <span class="name">${name}</span>
         </div>
@@ -48,9 +48,11 @@
         <div class="scroll-down"></div>
     </div>
 
-    <div class="content join-room">
+    <div class="content join-room" style="display: none;">
         <span>Click on a room from the list to join</span>
     </div>
+
+    <div class="content joining" style="display: none;"></div>
 
     <div class="content" style="display: none;">
         <ul class="tabs">

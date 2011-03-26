@@ -14,7 +14,7 @@ happycamper.rooms = function() {
 
     // on initialize
     templateRooms();
-    joinDefaultRoom();
+    openDefaultRoom();
     wireUpDownButtons();
 
     // templating
@@ -24,6 +24,9 @@ happycamper.rooms = function() {
         templateActiveRooms();
         templateLockedRooms();
         templateInactiveRooms();
+
+        wireOpenRoom();
+        openDefaultRoom();
     }
 
     function templateActiveRooms() {
@@ -36,10 +39,6 @@ happycamper.rooms = function() {
 
     function templateInactiveRooms() {
         $("#room-template").tmpl(getInactiveRooms()).appendTo($scrollbox);
-    }
-
-    function joinDefaultRoom() {
-        
     }
 
     // up down buttons
@@ -127,6 +126,32 @@ happycamper.rooms = function() {
         return scrollboxMarginTop() > scrollableDifference();
     }
 
+    // open room
+    function wireOpenRoom() {
+        $roomsList.find("div.room").click(function() {
+            var $room = $(this);
+            var roomId = $room.attr("roomid");
+
+            if (!$room.hasClass("active")) {
+                joinRoom(roomId);
+            }
+        });
+    }
+
+    function openDefaultRoom() {
+        // user already has room open
+
+        // open first active
+    }
+
+    function openRoom(roomId) {
+        
+    }
+
+    function joinRoom(roomId) {
+        
+    }
+
     // utilities
     function scrollboxMarginTop() {
         return parseInt($scrollbox.css("marginTop").replace("px"));
@@ -166,44 +191,42 @@ happycamper.rooms = function() {
     }
 };
 
-$(function() {
-    // use whatever is in the latest localStorage
-    refreshLoop();
-    happycamper.rooms();
-
-    setInterval(function() {
-        refreshLoop();
-    }, (happycamper.settings.refreshInterval * 1000));
-
-    function refreshLoop() {
-        var oldState = $.extend(true, {}, happycamper.state);
-
-        happycamper.state = loadJson("state");
-        happycamper.settings = loadJson("settings");
-
-        if (JSON.stringify(oldState) !== JSON.stringify(happycamper.state))
-            handleChange(oldState);
+happycamper.refresh = function() {
+    function getStateAndSettings() {
+        happycamper.state = happycamper.util.loadJson("state");
+        happycamper.settings = happycamper.util.loadJson("settings");
     }
 
-    function handleChange(oldState) {
-        var state = happycamper.state;
+    return {
+        roomsList: function() {
+            console.log("refreshing");
 
-        if (JSON.stringify(state.visibleRooms) !== JSON.stringify(oldState.visibility) ||
-            JSON.stringify(state.activeRooms) !== JSON.stringify(oldState.activeRooms)) {
+            getStateAndSettings();
             happycamper.rooms();
         }
     }
+}();
 
-    // utilities
-    function saveJson(key, json) {
-        localStorage[key] = JSON.stringify(json);
+happycamper.util = function() {
+    return {
+        saveJson: function(key, json) {
+            localStorage[key] = JSON.stringify(json);
+        },
+        loadJson: function(key) {
+            var value = localStorage[key];
+            if (value === undefined || value === null)
+                return null;
+
+            return JSON.parse(value);
+        }
     }
+}();
 
-    function loadJson(key) {
-        var value = localStorage[key];
-        if (value === undefined || value === null)
-            return null;
+$(function() {
+    // use whatever is in the latest localStorage
+    happycamper.state = happycamper.util.loadJson("state");
+    happycamper.settings = happycamper.util.loadJson("settings");
+    happycamper.rooms();
 
-        return JSON.parse(value);
-    }
+    // todo: handle getting kicked out of deleted room
 });

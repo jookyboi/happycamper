@@ -1,7 +1,6 @@
-/**
- * Created by Rui Jiang.
- * Date: 3/9/11
- */
+/*
+    Do not use. Only half of functions implemented.
+*/
 
 var Camper = Camper || {};
 
@@ -40,20 +39,25 @@ var Camper = Camper || {};
         this.rooms = {};
 
         this.rooms.listAll = function(callback) {
-            execute(routes.rooms.listAll(), "GET", callback);
+            execute(routes.rooms.listAll(), "GET", {}, callback);
         };
 
         this.rooms.presentRooms = function(callback) {
-            execute(routes.rooms.presentRooms(), "GET", callback);
+            execute(routes.rooms.presentRooms(), "GET", {}, callback);
+        };
+
+        this.rooms.recentMessages = function(roomId, arguments, callback) {
+            execute(routes.rooms.recentMessages(roomId), "GET", arguments, callback);
         };
 
         //// Private functions
-        function execute(routeUrl, requestType, callback) {
+        function execute(routeUrl, requestType, data, callback) {
             var dummyPasword = "x";
             var url = "https://" + options.apikey + ":" + dummyPasword + "@" + options.url + routeUrl;
 
             $.ajax({
                 url: url,
+                data: data,
                 type: requestType,
                 success: function(data) {
                     callback(data);
