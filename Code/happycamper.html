@@ -9,6 +9,7 @@
     <script type="text/javascript" src="scripts/plugins/jlinq.min.js"></script>
     <script type="text/javascript" src="scripts/plugins/json2.js"></script>
     <script type="text/javascript" src="scripts/plugins/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="scripts/plugins/date.format.js"></script>
     <script type="text/javascript" src="scripts/camper.js"></script>
     <script type="text/javascript" src="scripts/happycamper.js"></script>
 
@@ -21,19 +22,56 @@
 
     <script id="enter-message-template" type="text/x-jquery-tmpl">
         <div class="activity enter">
-            <span class="text">${name}</span>
-            <span class="time">${time}</span>
+            <span class="text">${user.name} entered the room</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="leave-message-template" type="text/x-jquery-tmpl">
+        <div class="activity enter">
+            <span class="text">${user.name} left the room</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="timestamp-message-template" type="text/x-jquery-tmpl">
+        <div class="activity timestamp">
+            <span class="text">${date}</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="who-message-template" type="text/x-jquery-tmpl">
+        <div class="activity who">
+            <span class="text">${user.name}:</span>
             <div class="clear"></div>
         </div>
     </script>
 
     <script id="text-message-template" type="text/x-jquery-tmpl">
-            <div class="activity text">
-                <span class="star"></span>
-                <span class="text">${body}</span>
-                <span class="time">${time}</span>
-                <div class="clear"></div>
-            </div>
+        <div class="activity text">
+            <span class="star"></span>
+            <span class="text">${body}</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="lock-message-template" type="text/x-jquery-tmpl">
+        <div class="activity lock">
+            <span class="text">${user.name} has locked the room</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="unlock-message-template" type="text/x-jquery-tmpl">
+        <div class="activity unlock">
+            <span class="text">${user.name} has unlocked the room</span>
+            <div class="clear"></div>
+        </div>
     </script>
 </head>
 <body>

@@ -149,7 +149,7 @@ div.viewer div.content div.tab-content div.group div.conversation {
 }
 div.viewer div.content div.tab-content div.group div.conversation div.activity {
   padding: 3px;
-  margin-bottom: 2px;
+  border-bottom: 1px solid #f3f3f3;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.activity span.text {
   width: 300px;
@@ -159,11 +159,17 @@ div.viewer div.content div.tab-content div.group div.conversation div.activity s
   float: right;
   color: #999;
 }
-div.viewer div.content div.tab-content div.group div.conversation div.enter {
-  background: #fcf8bb;
+div.viewer div.content div.tab-content div.group div.conversation div.enter, div.viewer div.content div.tab-content div.group div.conversation div.leave {
+  background: #D9E7FB;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.who {
   background: #f3f3f3;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.timestamp {
+  color: #aaa;
+}
+div.viewer div.content div.tab-content div.group div.conversation div.lock, div.viewer div.content div.tab-content div.group div.conversation div.unlock {
+  background: #F6C1A9;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.text span.star {
   opacity: 0;

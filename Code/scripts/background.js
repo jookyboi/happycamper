@@ -33,13 +33,13 @@ happycamper.background = function() {
         var settings = loadJson("settings");
         var state = loadJson("state");
 
-        if (settings === undefined) {
+        if (settings === null) {
             saveJson("settings", happycamper.settings);
         } else {
             happycamper.settings = settings;
         }
 
-        if (state === undefined) {
+        if (state === null) {
             saveJson("state", happycamper.state);
         } else {
             happycamper.state = state;
@@ -152,7 +152,7 @@ happycamper.background = function() {
 
         if (callRefresh) {
             callPopupFunction(function(popup) {
-                popup.refresh.room(room.id);
+                popup.happycamper.refresh.room(room.id);
             });
         }
     }
@@ -187,6 +187,7 @@ happycamper.background = function() {
 
         executor.rooms.recentMessages(room.id, arguments, function(messagesData) {
             var messages = getMessagesWithUser(messagesData.messages, roomState);
+            messages = getMessagesWithTimestamp(messages);
 
             if (fullRefresh) {
                 roomState.messages = messages;
@@ -206,6 +207,14 @@ happycamper.background = function() {
         return jLinq.from(messages)
             .select(function(message) {
                 message.user = getUserForMessage(message, roomState);
+                return message;
+            });
+    }
+
+    function getMessagesWithTimestamp(messages) {
+        return jLinq.from(messages)
+            .select(function(message) {
+                message.timestamp = dateFormat(message.created_at, "shortTime");
                 return message;
             });
     }

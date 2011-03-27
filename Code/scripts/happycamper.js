@@ -16,8 +16,13 @@ happycamper.rooms = function() {
     var ROOM_HEIGHT = 29;
     var MESSAGE_TYPES = {
         ENTER: "EnterMessage",
+        LEAVE: "LeaveMessage",
+        WHO: "WhoMessage",
         TEXT: "TextMessage",
-        TIMESTAMP: "TimestampMessage"
+        PASTE: "PasteMessage",
+        TIMESTAMP: "TimestampMessage",
+        LOCK: "LockMessage",
+        UNLOCK: "UnlockMessage"
     };
 
     // on initialize
@@ -164,23 +169,91 @@ happycamper.rooms = function() {
         $main.show();
         makeRoomButtonActive(roomId);
         templateMessages(roomId);
+
+        happycamper.state.openRoomId = roomId;
+        happycamper.util.saveJson("state", happycamper.state);
     }
 
     function templateMessages(roomId) {
-        var messages = getRoomState(roomId).messages;
-        
+        var roomState = getRoomState(roomId);
+
+        if (roomState === undefined)
+            return;
+
+        var messages = roomState.messages;
+
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.html("");
 
+        formatTimestampMessages(messages);
+        console.log(messages);
+
         $.each(messages, function(index, message) {
             if (message.type === MESSAGE_TYPES.ENTER) {
-                
+                $("#enter-message-template").tmpl(message).appendTo($conversationBox);
+            } else if (message.type === MESSAGE_TYPES.LEAVE) {
+                $("#leave-message-template").tmpl(message).appendTo($conversationBox);
+            } else if (message.type === MESSAGE_TYPES.TIMESTAMP) {
+                $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === MESSAGE_TYPES.TEXT) {
-                
+                insertWhoMessage(messages, message, index);
+                $("#text-message-template").tmpl(message).appendTo($conversationBox);
+            } else if (message.type === MESSAGE_TYPES.LOCK) {
+                $("#lock-message-template").tmpl(message).appendTo($conversationBox);
+            } else if (message.type === MESSAGE_TYPES.UNLOCK) {
+                $("#unlock-message-template").tmpl(message).appendTo($conversationBox);
             }
         });
 
-        // todo: set openRoomId
+        scrollToConversationBottom();
+    }
+
+    function formatTimestampMessages(messages) {
+        var timestampMessages = jLinq.from(messages)
+            .where(function(message) {
+                return message.type === MESSAGE_TYPES.TIMESTAMP;
+            }).select();
+
+        $.each(timestampMessages, function(index, message) {
+            if (index === 0) {
+                message.date = formatTimestampWithDate(message.created_at);
+            } else {
+                var lastTimeStamp = timestampMessages[index - 1].created_at;
+
+                if (dateFormat(lastTimeStamp, "shortDate") !== dateFormat(message.created_at, "shortDate")) {
+                    message.date = formatTimestampWithDate(message.created_at);
+                }
+            }
+        });
+    }
+
+    function insertWhoMessage(messages, message, index) {
+        var $conversationBox = $main.find("div.conversation");
+
+        // add who message if text/paste is the firt of the block
+        if (index === 0) {
+            $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
+        } else {
+            var lastMessage = messages[index - 1];
+
+            if ((lastMessage.type !== MESSAGE_TYPES.TEXT &&
+                 lastMessage.type !== MESSAGE_TYPES.PASTE) ||
+                (lastMessage.user_id !== message.user_id)) {
+                $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
+            }
+        }
+    }
+
+    function whoMessage(user) {
+        return {
+            type: "WhoMessage",
+            user_id: user.id,
+            user: user
+        };
+    }
+
+    function formatTimestampWithDate(time) {
+        return dateFormat(time, "mmmm d");
     }
 
     function joinRoom(roomId) {
@@ -241,6 +314,16 @@ happycamper.rooms = function() {
                 return roomState.id === roomId;
             }).first();
     }
+
+    function scrollToConversationBottom() {
+        var $conversationBox = $main.find("div.conversation");
+        $conversationBox.scrollTop($conversationBox[0].scrollHeight);
+    }
+
+    // public
+    this.refreshRoom = function(roomId) {
+        templateMessages(roomId);
+    }
 };
 
 happycamper.refresh = function() {
@@ -255,7 +338,8 @@ happycamper.refresh = function() {
             happycamper.rooms();
         },
         room: function(roomId) {
-            
+            getStateAndSettings();
+            happycamper.rooms().refreshRoom(roomId);
         }
     }
 }();
@@ -263,6 +347,7 @@ happycamper.refresh = function() {
 happycamper.util = function() {
     return {
         saveJson: function(key, json) {
+            localStorage.removeItem(key);
             localStorage[key] = JSON.stringify(json);
         },
         loadJson: function(key) {
@@ -275,6 +360,7 @@ happycamper.util = function() {
     }
 }();
 
+var happycamperRooms;
 $(function() {
     // use whatever is in the latest localStorage
     happycamper.state = happycamper.util.loadJson("state");
