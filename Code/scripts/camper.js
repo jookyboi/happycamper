@@ -58,7 +58,7 @@ var Camper = Camper || {};
             execute(routes.rooms.recentMessages(roomId), "GET", arguments, callback);
         };
 
-        var users = {};
+        this.users = {};
 
         this.users.show = function(userId, callback) {
             execute(routes.users.show(userId), "GET", {}, callback);  

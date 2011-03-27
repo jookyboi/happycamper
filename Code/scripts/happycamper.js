@@ -167,11 +167,10 @@ happycamper.rooms = function() {
     }
 
     function templateMessages(roomId) {
-        /*
-        var messages = happycamper.state.activeRoomStates[getRoomId(roomId)].messages;
+        var messages = getRoomState(roomId).messages;
+        
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.html("");
-
 
         $.each(messages, function(index, message) {
             if (message.type === MESSAGE_TYPES.ENTER) {
@@ -180,7 +179,6 @@ happycamper.rooms = function() {
                 
             }
         });
-        */
 
         // todo: set openRoomId
     }
@@ -224,15 +222,24 @@ happycamper.rooms = function() {
     function getLockedRooms() {
         return jLinq.from(visibleRooms)
             .where(function(room) {
-                return room.locked
+                // user could still enter a locked room
+                return (room.locked &&
+                        jLinq.from(activeRooms)
+                            .where(function(activeRoom) {
+                                return activeRoom.id === room.id;
+                            }).count() === 0
+                        );
             }).select(function(room) {
                 room.state = "locked";
                 return room;
             });
     }
 
-    function getRoomId(roomId) {
-        return "room_" + roomId;
+    function getRoomState(roomId) {
+        return jLinq.from(happycamper.state.activeRoomStates)
+            .where(function(roomState) {
+                return roomState.id === roomId;
+            }).first();
     }
 };
 
