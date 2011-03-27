@@ -119,7 +119,7 @@ happycamper.background = function() {
         saveJson("state", happycamper.state);
     }
 
-    // room state
+    // messages and users
     function getUsersForRoom(room) {
         var roomState = happycamper.state.activeRoomStates[getRoomId(room)];
 

@@ -99,11 +99,15 @@ div.viewer div.content ul.tabs li {
 div.viewer div.content ul.tabs li.chat {
   background: url("../images/chat.png") no-repeat 8px 5px;
 }
-div.viewer div.content ul.tabs li.starred {
-  background: url("../images/star.png") no-repeat 8px 4px;
+div.viewer div.content ul.tabs li.users {
+  background: url("../images/users.png") no-repeat 11px 6px;
+  padding-left: 28px;
 }
 div.viewer div.content ul.tabs li.files {
   background: url("../images/files.png") no-repeat 8px 4px;
+}
+div.viewer div.content ul.tabs li.search {
+  background: url("../images/search.png") no-repeat 9px 6px;
 }
 div.viewer div.content ul.tabs li.selected {
   background-color: #f1f1f1;

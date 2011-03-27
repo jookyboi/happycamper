@@ -167,11 +167,12 @@ happycamper.rooms = function() {
     }
 
     function templateMessages(roomId) {
+        /*
         var messages = happycamper.state.activeRoomStates[getRoomId(roomId)].messages;
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.html("");
 
-        /*
+
         $.each(messages, function(index, message) {
             if (message.type === MESSAGE_TYPES.ENTER) {
                 
