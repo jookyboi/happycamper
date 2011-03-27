@@ -10,7 +10,15 @@ happycamper.rooms = function() {
     var $rooms = $("div.rooms");
     var $roomsList = $("div.rooms div.list");
     var $scrollbox = $roomsList.find("div.scrollbox");
+    var $joining = $("div.content.joining");
+    var $main = $("div.content.main");
+
     var ROOM_HEIGHT = 29;
+    var MESSAGE_TYPES = {
+        ENTER: "EnterMessage",
+        TEXT: "TextMessage",
+        TIMESTAMP: "TimestampMessage"
+    };
 
     // on initialize
     templateRooms();
@@ -139,17 +147,49 @@ happycamper.rooms = function() {
     }
 
     function openDefaultRoom() {
+        var state = happycamper.state;
+
         // user already has room open
+        if (state.openRoomId !== -1) {
+            openRoom(state.openRoomId);
+            return;
+        }
 
         // open first active
+        var firstActiveRoom = jLinq.from(activeRooms).first();
+        openRoom(firstActiveRoom.id);
     }
 
     function openRoom(roomId) {
-        
+        $main.show();
+        makeRoomButtonActive(roomId);
+        templateMessages(roomId);
+    }
+
+    function templateMessages(roomId) {
+        var messages = happycamper.state.activeRoomStates[getRoomId(roomId)].messages;
+        var $conversationBox = $main.find("div.conversation");
+        $conversationBox.html("");
+
+        /*
+        $.each(messages, function(index, message) {
+            if (message.type === MESSAGE_TYPES.ENTER) {
+                
+            } else if (message.type === MESSAGE_TYPES.TEXT) {
+                
+            }
+        });
+        */
+
+        // todo: set openRoomId
     }
 
     function joinRoom(roomId) {
         
+    }
+
+    function makeRoomButtonActive(roomId) {
+        $roomsList.find("div.room[roomid='" + roomId + "']").addClass("selected");
     }
 
     // utilities
@@ -189,6 +229,10 @@ happycamper.rooms = function() {
                 return room;
             });
     }
+
+    function getRoomId(roomId) {
+        return "room_" + roomId;
+    }
 };
 
 happycamper.refresh = function() {
@@ -199,10 +243,11 @@ happycamper.refresh = function() {
 
     return {
         roomsList: function() {
-            console.log("refreshing");
-
             getStateAndSettings();
             happycamper.rooms();
+        },
+        room: function(roomId) {
+            
         }
     }
 }();

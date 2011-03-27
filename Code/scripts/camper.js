@@ -22,6 +22,10 @@ var Camper = Camper || {};
             leave: function(roomId) { return "/room/" + roomId + "/leave.json"; },
             lock: function(roomId) { return "/room/" + roomId + "/lock.json"; },
             unlock: function(roomId) { return "/room/" + roomId + "/unlock.json" }
+        },
+        users: {
+            show: function(userId) { return "/users/" + userId + ".json"; },
+            showAuthenticatedUser: function() { return "/users/me.json"; }
         }
     };
 
@@ -46,8 +50,18 @@ var Camper = Camper || {};
             execute(routes.rooms.presentRooms(), "GET", {}, callback);
         };
 
+        this.rooms.show = function(roomId, callback) {
+            execute(routes.rooms.show(roomId), "GET", {}, callback);
+        };
+
         this.rooms.recentMessages = function(roomId, arguments, callback) {
             execute(routes.rooms.recentMessages(roomId), "GET", arguments, callback);
+        };
+
+        var users = {};
+
+        this.users.show = function(userId, callback) {
+            execute(routes.users.show(userId), "GET", {}, callback);  
         };
 
         //// Private functions

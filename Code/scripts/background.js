@@ -8,7 +8,8 @@ happycamper.state = {
     visibleRooms: [],
     activeRooms: [],
     openRoomId: -1,
-    activeRoomStates: []
+    activeRoomStates: [],
+    allUsers: []
 };
 
 happycamper.background = function() {
@@ -40,7 +41,6 @@ happycamper.background = function() {
         // deep copy
         var newState = $.extend(true, {}, happycamper.state);
         setVisibleActiveRooms(newState);
-
         setActiveRoomStates();
     }
 
@@ -115,11 +115,17 @@ happycamper.background = function() {
             getMessagesForRoom(room);
         }
 
+        console.log(happycamper.state);
         saveJson("state", happycamper.state);
     }
 
+    // room state
     function getUsersForRoom(room) {
-        var state = happycamper.state;
+        var roomState = happycamper.state.activeRoomStates[getRoomId(room)];
+
+        executor.rooms.show(room.id, function(usersData) {
+            roomState.users = usersData.room.users;
+        });
     }
 
     function getMessagesForRoom(room) {
@@ -139,15 +145,75 @@ happycamper.background = function() {
         }
 
         executor.rooms.recentMessages(room.id, arguments, function(messagesData) {
+            var messages = getMessagesWithUser(messagesData.messages, roomState);
+
             if (fullRefresh) {
-                roomState.messages = messagesData.messages;
+                roomState.messages = messages;
             } else {
-                roomState.messages = roomState.messages.concat(messagesData.messages);
-                showMessageNotifications(messagesData.messages);
+                roomState.messages = roomState.messages.concat(messages);
+                showMessageNotifications(messages);
+
+                callPopupFunction(function(popup) {
+                    popup.refresh.room(room.id);
+                });
             }
 
-            console.log(roomState.messages);
+            //console.log(roomState.messages);
         });
+    }
+
+    function getMessagesWithUser(messages, roomState) {
+        return jLinq.from(messages)
+            .select(function(message) {
+                message.user = getUserForMessage(message, roomState);
+                return message;
+            });
+    }
+
+    function getUserForMessage(message, roomState) {
+        var userId = message.user_id;
+
+        if (userId === null)
+            return null;
+
+        var user = jLinq.from(roomState.users)
+            .where(function(user) {
+                return user.id === userId;
+            }).first();
+
+        if (user !== undefined) {
+            setUser(user);
+            return user;
+        }
+        
+        // user not present, find within allUsers
+        user = getUserFromAllUsers(userId);
+
+        if (user !== undefined)
+            return user;
+
+        // get from campfire
+        setCampfireUserForMessage(message);
+    }
+
+    function getUserFromAllUsers(userId) {
+        jLinq.from(happycamper.state.allUsers)
+            .where(function(user) {
+                return user.id === userId;
+            }).first();
+    }
+
+    function setUser(user) {
+        var allUsers = happycamper.state.allUsers;
+        var userIdStr = getUserId(user);
+
+        if (allUsers[userIdStr] === undefined) {
+            allUsers[userIdStr] = user;
+        }
+    }
+
+    function setCampfireUserForMessage(message) {
+        
     }
 
     // notifications
@@ -158,7 +224,6 @@ happycamper.background = function() {
     // utilities
     function callPopupFunction(callback) {
         var popup = chrome.extension.getViews({type: "popup"});
-        console.log(popup);
 
         if (popup.length > 0) {
             callback(popup[0]);
@@ -179,6 +244,10 @@ happycamper.background = function() {
 
     function getRoomId(room) {
         return "room_" + room.id;
+    }
+
+    function getUserId(user) {
+        return "user_" + user.id;
     }
 };
 

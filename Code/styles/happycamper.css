@@ -120,7 +120,7 @@ div.viewer div.content ul.tabs li.selected:hover {
 }
 div.viewer div.content div.tab-content {
   background: #f1f1f1;
-  height: 255px;
+  height: 280px;
   padding: 10px;
   border-top: 1px solid #e9e9e9;
   border-left: 1px solid #e9e9e9;
@@ -130,7 +130,7 @@ div.viewer div.content div.tab-content {
 }
 div.viewer div.content div.tab-content div.group {
   background: #fff;
-  height: 200px;
+  height: 228px;
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #e5e5e5;
@@ -141,7 +141,7 @@ div.viewer div.content div.tab-content div.group div.conversation {
   padding: 5px;
   width: 383px;
   overflow: auto;
-  height: 190px;
+  height: 218px;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.activity {
   padding: 3px;
@@ -155,24 +155,24 @@ div.viewer div.content div.tab-content div.group div.conversation div.activity s
   float: right;
   color: #999;
 }
-div.viewer div.content div.tab-content div.group div.conversation div.presence {
+div.viewer div.content div.tab-content div.group div.conversation div.enter {
   background: #fcf8bb;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.who {
   background: #f3f3f3;
 }
-div.viewer div.content div.tab-content div.group div.conversation div.message span.star {
+div.viewer div.content div.tab-content div.group div.conversation div.text span.star {
   opacity: 0;
   display: inline-block;
   width: 14px;
   height: 14px;
   cursor: pointer;
 }
-div.viewer div.content div.tab-content div.group div.conversation div.message:hover span.star {
+div.viewer div.content div.tab-content div.group div.conversation div.text:hover span.star {
   opacity: 1.0;
   background: url("../images/star-inactive.png") no-repeat;
 }
-div.viewer div.content div.tab-content div.group div.conversation div.message.starred span.star {
+div.viewer div.content div.tab-content div.group div.conversation div.text.starred span.star {
   opacity: 1.0;
   background: url("../images/star.png") no-repeat;
 }
@@ -217,8 +217,12 @@ div.viewer div.content.join-room span {
   cursor: default;
 }
 div.viewer div.content.joining {
-  background: url("../images/ajax.gif") no-repeat 50% 50%;
-  height: 300px;
+  background: white url("../images/ajax.gif") no-repeat 50% 50%;
+  height: 327px;
+  opacity: 0.7;
+  z-index: 1000;
+  position: absolute;
+  left: 150px;
 }
 div.blank-slate {
   width: 190px;

@@ -18,6 +18,23 @@
             <span class="name">${name}</span>
         </div>
     </script>
+
+    <script id="enter-message-template" type="text/x-jquery-tmpl">
+        <div class="activity enter">
+            <span class="text">${name}</span>
+            <span class="time">${time}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="text-message-template" type="text/x-jquery-tmpl">
+            <div class="activity text">
+                <span class="star"></span>
+                <span class="text">${body}</span>
+                <span class="time">${time}</span>
+                <div class="clear"></div>
+            </div>
+    </script>
 </head>
 <body>
 
@@ -54,7 +71,7 @@
 
     <div class="content joining" style="display: none;"></div>
 
-    <div class="content" style="display: none;">
+    <div class="content main" style="display: none;">
         <ul class="tabs">
             <li class="chat selected">Chat</li>
             <li class="starred">Starred</li>
@@ -63,79 +80,7 @@
         <div class="tab-content chat">
             <div class="group">
                 <div class="conversation">
-                    <div class="activity presence">
-                        <span class="text">Prakash K. has left the room</span>
-                        <span class="time">10:53 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity who">
-                        <span class="text">Rui J:</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Hey, who is here</span>
-                        <span class="time">11:23 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">This is my super long message which will go over the edge for sure</span>
-                        <span class="time">11:23 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message starred">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity message starred">
-                        <span class="star"></span>
-                        <span class="text">Is anybody listening to me?</span>
-                        <span class="time">11:25 AM</span>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="activity">
-                        <span class="paste"></span>
-
-                    </div>
+                    
                 </div>
                 <div class="sidebar">
                     
