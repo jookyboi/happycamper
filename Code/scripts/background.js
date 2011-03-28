@@ -30,17 +30,17 @@ happycamper.background = function() {
     };
 
     function initSettings() {
-        var settings = loadJson("settings");
-        var state = loadJson("state");
+        var settings = happycamper.util.loadJson("settings");
+        var state = happycamper.util.loadJson("state");
 
         if (settings === null) {
-            saveJson("settings", happycamper.settings);
+            happycamper.util.saveJson("settings", happycamper.settings);
         } else {
             happycamper.settings = settings;
         }
 
         if (state === null) {
-            saveJson("state", happycamper.state);
+            happycamper.util.saveJson("state", happycamper.state);
         } else {
             happycamper.state = state;
         }
@@ -94,7 +94,7 @@ happycamper.background = function() {
         }
 
         happycamper.state = newState;
-        saveJson("state", happycamper.state);
+        happycamper.util.saveJson("state", happycamper.state);
 
         callPopupFunction(function(popup) {
             popup.happycamper.refresh.roomsList();
@@ -127,10 +127,10 @@ happycamper.background = function() {
     function saveStateOnLoadComplete(room, callRefresh) {
         var messages = getRoomState(room.id).messages;
 
-        if (unnamedMessagesCount(messages) > 0) {
-            // not all users have been set yet
+        if (unnamedMessagesCount(messages) > 0 || noUploadMessagesCount(messages) > 0) {
+            // not all users and files have been set
             var checkUnnamedInterval = setInterval(function() {
-                if (unnamedMessagesCount(messages) === 0) {
+                if (unnamedMessagesCount(messages) === 0 && noUploadMessagesCount(messages) === 0) {
                     saveStateAndRefresh(room, callRefresh);
                     clearInterval(checkUnnamedInterval);
                 }
@@ -147,8 +147,16 @@ happycamper.background = function() {
             }).count();
     }
 
+    function noUploadMessagesCount(messages) {
+        return jLinq.from(messages)
+            .where(function(message) {
+                return (message.type === happycamper.util.MESSAGE_TYPES.UPLOAD &&
+                        message.upload === undefined);
+            }).count();
+    }
+
     function saveStateAndRefresh(room, callRefresh) {
-        saveJson("state", happycamper.state);
+        happycamper.util.saveJson("state", happycamper.state);
 
         if (callRefresh) {
             callPopupFunction(function(popup) {
@@ -189,6 +197,9 @@ happycamper.background = function() {
             var messages = getMessagesWithUser(messagesData.messages, roomState);
             messages = getMessagesWithTimestamp(messages);
 
+            // async call
+            getFileForMessages(room.id, messages);
+
             if (fullRefresh) {
                 roomState.messages = messages;
                 saveStateOnLoadComplete(room, false);
@@ -207,14 +218,6 @@ happycamper.background = function() {
         return jLinq.from(messages)
             .select(function(message) {
                 message.user = getUserForMessage(message, roomState);
-                return message;
-            });
-    }
-
-    function getMessagesWithTimestamp(messages) {
-        return jLinq.from(messages)
-            .select(function(message) {
-                message.timestamp = dateFormat(message.created_at, "shortTime");
                 return message;
             });
     }
@@ -259,6 +262,30 @@ happycamper.background = function() {
         });
     }
 
+    function getMessagesWithTimestamp(messages) {
+        return jLinq.from(messages)
+            .select(function(message) {
+                message.timestamp = dateFormat(message.created_at, "shortTime");
+                return message;
+            });
+    }
+
+    function getFileForMessages(roomId, messages) {
+        var uploadMessages = jLinq.from(messages)
+            .where(function(message) {
+                return message.type === happycamper.util.MESSAGE_TYPES.UPLOAD;
+            }).select();
+
+        $.each(uploadMessages, function(index, message) {
+            executor.rooms.getUploadObject(roomId, message.id, function(uploadData) {
+                message.upload = uploadData.upload;
+
+                // in kb
+                message.upload.size = message.upload.byte_size / 1000;
+            });
+        });
+    }
+
     // notifications
     function showMessageNotifications(newMessages) {
         
@@ -271,20 +298,6 @@ happycamper.background = function() {
         if (popup.length > 0) {
             callback(popup[0]);
         }
-    }
-
-    function saveJson(key, json) {
-        localStorage.removeItem(key);
-        console.log(JSON.stringify(json));
-        localStorage[key] = JSON.stringify(json);
-    }
-
-    function loadJson(key) {
-        var value = localStorage[key];
-        if (value === undefined || value === null)
-            return null;
-
-        return JSON.parse(value);
     }
 
     function getRoomState(roomId) {

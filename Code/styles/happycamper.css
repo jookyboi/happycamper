@@ -171,6 +171,11 @@ div.viewer div.content div.tab-content div.group div.conversation div.timestamp 
 div.viewer div.content div.tab-content div.group div.conversation div.lock, div.viewer div.content div.tab-content div.group div.conversation div.unlock {
   background: #F6C1A9;
 }
+div.viewer div.content div.tab-content div.group div.conversation div.upload {
+  background: url("../images/files.png") no-repeat 0 3px;
+  padding-left: 18px;
+  height: 15px;
+}
 div.viewer div.content div.tab-content div.group div.conversation div.text span.star {
   opacity: 0;
   display: inline-block;

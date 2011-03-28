@@ -12,6 +12,7 @@
     <script type="text/javascript" src="scripts/plugins/date.format.js"></script>
     <script type="text/javascript" src="scripts/camper.js"></script>
     <script type="text/javascript" src="scripts/happycamper.js"></script>
+    <script type="text/javascript" src="scripts/happycamper.util.js"></script>
 
     <script id="room-template" type="text/x-jquery-tmpl">
         <div class="room ${state}" roomid="${id}">
@@ -53,10 +54,19 @@
 
     <script id="text-message-template" type="text/x-jquery-tmpl">
         <div class="activity text">
-            <span class="star"></span>
             <span class="text">${body}</span>
             <span class="time">${timestamp}</span>
             <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="upload-message-template" type="text/x-jquery-tmpl">
+        <div class="activity upload">
+            <span class="text">
+                <a href="${upload.full_url}">${upload.name}</a>
+                (${upload.size} kb)
+            </span>
+            <span class="time">${timestamp}</span>
         </div>
     </script>
 

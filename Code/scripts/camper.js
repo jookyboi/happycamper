@@ -15,7 +15,7 @@ var Camper = Camper || {};
             update: function(roomId) { return "/room/#" + roomId + ".json"; },
             recentMessages: function(roomId) { return "/room/" + roomId + "/recent.json"; },
             recentUploads: function(roomId) { return "/room/" + roomId + "/uploads.json"; },
-            uploadObject: function(roomid, uploadMessageId) {
+            getUploadObject: function(roomid, uploadMessageId) {
                 return "/room/" + roomid + "/messages/" + uploadMessageId + "/upload.json";
             },
             join: function(roomId) { return "/room/" + roomId + "/join.json"; },
@@ -56,6 +56,10 @@ var Camper = Camper || {};
 
         this.rooms.recentMessages = function(roomId, arguments, callback) {
             execute(routes.rooms.recentMessages(roomId), "GET", arguments, callback);
+        };
+
+        this.rooms.getUploadObject = function(roomId, uploadMessageId, callback) {
+            execute(routes.rooms.getUploadObject(roomId, uploadMessageId), "GET", {}, callback);
         };
 
         this.users = {};

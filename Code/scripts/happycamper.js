@@ -14,16 +14,6 @@ happycamper.rooms = function() {
     var $main = $("div.content.main");
 
     var ROOM_HEIGHT = 29;
-    var MESSAGE_TYPES = {
-        ENTER: "EnterMessage",
-        LEAVE: "LeaveMessage",
-        WHO: "WhoMessage",
-        TEXT: "TextMessage",
-        PASTE: "PasteMessage",
-        TIMESTAMP: "TimestampMessage",
-        LOCK: "LockMessage",
-        UNLOCK: "UnlockMessage"
-    };
 
     // on initialize
     templateRooms();
@@ -186,32 +176,36 @@ happycamper.rooms = function() {
         $conversationBox.html("");
 
         formatTimestampMessages(messages);
-        console.log(messages);
+
+        var TYPES = happycamper.util.MESSAGE_TYPES;
 
         $.each(messages, function(index, message) {
-            if (message.type === MESSAGE_TYPES.ENTER) {
+            if (message.type === TYPES.ENTER) {
                 $("#enter-message-template").tmpl(message).appendTo($conversationBox);
-            } else if (message.type === MESSAGE_TYPES.LEAVE) {
+            } else if (message.type === TYPES.LEAVE) {
                 $("#leave-message-template").tmpl(message).appendTo($conversationBox);
-            } else if (message.type === MESSAGE_TYPES.TIMESTAMP) {
+            } else if (message.type === TYPES.TIMESTAMP) {
                 $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
-            } else if (message.type === MESSAGE_TYPES.TEXT) {
+            } else if (message.type === TYPES.TEXT) {
                 insertWhoMessage(messages, message, index);
                 $("#text-message-template").tmpl(message).appendTo($conversationBox);
-            } else if (message.type === MESSAGE_TYPES.LOCK) {
+            } else if (message.type === TYPES.UPLOAD) {
+                $("#upload-message-template").tmpl(message).appendTo($conversationBox);
+            } else if (message.type === TYPES.LOCK) {
                 $("#lock-message-template").tmpl(message).appendTo($conversationBox);
-            } else if (message.type === MESSAGE_TYPES.UNLOCK) {
+            } else if (message.type === TYPES.UNLOCK) {
                 $("#unlock-message-template").tmpl(message).appendTo($conversationBox);
             }
         });
 
         scrollToConversationBottom();
+        wireUploadLinks();
     }
 
     function formatTimestampMessages(messages) {
         var timestampMessages = jLinq.from(messages)
             .where(function(message) {
-                return message.type === MESSAGE_TYPES.TIMESTAMP;
+                return message.type === happycamper.util.MESSAGE_TYPES.TIMESTAMP;
             }).select();
 
         $.each(timestampMessages, function(index, message) {
@@ -235,9 +229,10 @@ happycamper.rooms = function() {
             $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
         } else {
             var lastMessage = messages[index - 1];
+            var TYPES = happycamper.util.MESSAGE_TYPES;
 
-            if ((lastMessage.type !== MESSAGE_TYPES.TEXT &&
-                 lastMessage.type !== MESSAGE_TYPES.PASTE) ||
+            if ((lastMessage.type !== TYPES.TEXT &&
+                 lastMessage.type !== TYPES.PASTE) ||
                 (lastMessage.user_id !== message.user_id)) {
                 $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
             }
@@ -315,6 +310,18 @@ happycamper.rooms = function() {
             }).first();
     }
 
+    function wireUploadLinks() {
+        var $conversationBox = $main.find("div.conversation");
+        $conversationBox.find("div.upload a").click(function() {
+            console.log("file click");
+            chrome.tabs.create({
+                url: $(this).attr("href")
+            });
+
+            return false;
+        });
+    }
+
     function scrollToConversationBottom() {
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.scrollTop($conversationBox[0].scrollHeight);
@@ -344,23 +351,6 @@ happycamper.refresh = function() {
     }
 }();
 
-happycamper.util = function() {
-    return {
-        saveJson: function(key, json) {
-            localStorage.removeItem(key);
-            localStorage[key] = JSON.stringify(json);
-        },
-        loadJson: function(key) {
-            var value = localStorage[key];
-            if (value === undefined || value === null)
-                return null;
-
-            return JSON.parse(value);
-        }
-    }
-}();
-
-var happycamperRooms;
 $(function() {
     // use whatever is in the latest localStorage
     happycamper.state = happycamper.util.loadJson("state");
