@@ -54,7 +54,11 @@
 
     <script id="text-message-template" type="text/x-jquery-tmpl">
         <div class="activity text">
-            <span class="text">${body}</span>
+            {{if hasLink}}
+                <span class="text">{{html body}}</span>
+            {{else}}
+                <span class="text">${body}</span>
+            {{/if}}
             <span class="time">${timestamp}</span>
             <div class="clear"></div>
         </div>

@@ -189,7 +189,7 @@ happycamper.rooms = function() {
                 $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.TEXT) {
                 insertWhoMessage(messages, message, index);
-                $("#text-message-template").tmpl(message).appendTo($conversationBox);
+                $("#text-message-template").tmpl(replaceURLWithHTMLLinks(message)).appendTo($conversationBox);
             } else if (message.type === TYPES.UPLOAD) {
                 insertWhoMessage(messages, message, index);
                 $("#upload-message-template").tmpl(message).appendTo($conversationBox);
@@ -203,7 +203,7 @@ happycamper.rooms = function() {
         });
 
         scrollToConversationBottom();
-        wireUploadLinks();
+        wireLinks();
     }
 
     function formatTimestampMessages(messages) {
@@ -361,9 +361,9 @@ happycamper.rooms = function() {
             }).first();
     }
 
-    function wireUploadLinks() {
+    function wireLinks() {
         var $conversationBox = $main.find("div.conversation");
-        $conversationBox.find("div.upload a").click(function() {
+        $conversationBox.find("div.activity a").click(function() {
             chrome.tabs.create({
                 url: $(this).attr("href")
             });
@@ -379,6 +379,15 @@ happycamper.rooms = function() {
 
     function formatTimestampWithDate(time) {
         return dateFormat(time, "mmmm d");
+    }
+
+    function replaceURLWithHTMLLinks(message) {
+        var formattedMessage = $.extend(true, {}, message);
+        var expression = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+
+        formattedMessage.hasLink = expression.test(formattedMessage.body);
+        formattedMessage.body = formattedMessage.body.replace(expression, '<a href="$1">$1</a>');
+        return formattedMessage;
     }
 
     // public

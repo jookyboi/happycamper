@@ -144,7 +144,8 @@ div.viewer div.content div.tab-content div.group div.conversation {
   float: left;
   padding: 5px;
   width: 383px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 218px;
 }
 div.viewer div.content div.tab-content div.group div.conversation div.activity {
