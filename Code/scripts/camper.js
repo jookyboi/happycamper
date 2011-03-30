@@ -21,7 +21,8 @@ var Camper = Camper || {};
             join: function(roomId) { return "/room/" + roomId + "/join.json"; },
             leave: function(roomId) { return "/room/" + roomId + "/leave.json"; },
             lock: function(roomId) { return "/room/" + roomId + "/lock.json"; },
-            unlock: function(roomId) { return "/room/" + roomId + "/unlock.json" }
+            unlock: function(roomId) { return "/room/" + roomId + "/unlock.json" },
+            speak: function(roomId) { return "/room/" + roomId + "/speak.json"; }
         },
         users: {
             show: function(userId) { return "/users/" + userId + ".json"; },
@@ -40,6 +41,8 @@ var Camper = Camper || {};
         var routes = Camper.Routes;
 
         //// Public functions
+
+        // rooms
         this.rooms = {};
 
         this.rooms.listAll = function(callback) {
@@ -62,6 +65,11 @@ var Camper = Camper || {};
             execute(routes.rooms.getUploadObject(roomId, uploadMessageId), "GET", {}, callback);
         };
 
+        this.rooms.speak = function(roomId, arguments, callback) {
+            execute(routes.rooms.speak(roomId), "POST", arguments, callback);
+        };
+
+        // users
         this.users = {};
 
         this.users.show = function(userId, callback) {

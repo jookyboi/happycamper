@@ -15,6 +15,7 @@ happycamper.util = function() {
         MESSAGE_TYPES: {
             ENTER: "EnterMessage",
             LEAVE: "LeaveMessage",
+            KICK: "KickMessage",
             WHO: "WhoMessage",
             TEXT: "TextMessage",
             PASTE: "PasteMessage",

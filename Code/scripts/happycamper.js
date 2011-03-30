@@ -17,7 +17,6 @@ happycamper.rooms = function() {
 
     // on initialize
     templateRooms();
-    openDefaultRoom();
     wireUpDownButtons();
 
     // templating
@@ -159,11 +158,13 @@ happycamper.rooms = function() {
         $main.show();
         makeRoomButtonActive(roomId);
         templateMessages(roomId);
+        wireSendTextMessage();
 
         happycamper.state.openRoomId = roomId;
         happycamper.util.saveJson("state", happycamper.state);
     }
 
+    // messages
     function templateMessages(roomId) {
         var roomState = getRoomState(roomId);
 
@@ -182,7 +183,7 @@ happycamper.rooms = function() {
         $.each(messages, function(index, message) {
             if (message.type === TYPES.ENTER) {
                 $("#enter-message-template").tmpl(message).appendTo($conversationBox);
-            } else if (message.type === TYPES.LEAVE) {
+            } else if (message.type === TYPES.LEAVE || message.type === TYPES.KICK) {
                 $("#leave-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.TIMESTAMP) {
                 $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
@@ -251,16 +252,55 @@ happycamper.rooms = function() {
         };
     }
 
-    function formatTimestampWithDate(time) {
-        return dateFormat(time, "mmmm d");
+    // send message
+    function wireSendTextMessage() {
+        var $sendBox = $main.find("div.send textarea");
+
+        $sendBox.keydown(function(event) {
+            // pressed enter
+            if (event.keyCode == "13") {
+                sendMessage();
+                return false;
+            }
+        });
+
+        $main.find("div.send button").click(function() {
+            sendMessage();
+            return false;
+        });
+    }
+
+    function sendMessage() {
+        var $sendBox = $main.find("div.send textarea");
+        
+        var message = $.trim($sendBox.val());
+        if (message !== "") {
+            var background = chrome.extension.getBackgroundPage();
+            var executor = background.happycamper.background.executor();
+
+            // we're deliberate omitting the message type
+            // according to the api, if the type is omitted,
+            // messages with \n will be considered a paste
+            executor.rooms.speak(happycamper.state.openRoomId, {
+                message: {
+                    body: message
+                }
+            }, function() {
+               // upon callback, refresh the data. background will auto-refresh the chat
+                background.happycamper.background.refresh();
+            });
+
+            $sendBox.val("").focus();
+        }
+    }
+
+    // join room
+    function makeRoomButtonActive(roomId) {
+        $roomsList.find("div.room[roomid='" + roomId + "']").addClass("selected");
     }
 
     function joinRoom(roomId) {
-        
-    }
 
-    function makeRoomButtonActive(roomId) {
-        $roomsList.find("div.room[roomid='" + roomId + "']").addClass("selected");
     }
 
     // utilities
@@ -324,7 +364,6 @@ happycamper.rooms = function() {
     function wireUploadLinks() {
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.find("div.upload a").click(function() {
-            console.log("file click");
             chrome.tabs.create({
                 url: $(this).attr("href")
             });
@@ -336,6 +375,10 @@ happycamper.rooms = function() {
     function scrollToConversationBottom() {
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.scrollTop($conversationBox[0].scrollHeight);
+    }
+
+    function formatTimestampWithDate(time) {
+        return dateFormat(time, "mmmm d");
     }
 
     // public

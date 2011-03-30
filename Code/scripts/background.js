@@ -18,6 +18,7 @@ happycamper.background = function() {
         apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
     });
 
+    // public
     this.initialize = function() {
         initSettings();
 
@@ -29,6 +30,15 @@ happycamper.background = function() {
         }, (happycamper.settings.refreshInterval * 1000));
     };
 
+    this.refresh = function() {
+        refreshLoop();
+    };
+
+    this.executor = function() {
+        return executor;  
+    };
+
+    // initialize
     function initSettings() {
         var settings = happycamper.util.loadJson("settings");
         var state = happycamper.util.loadJson("state");
@@ -322,6 +332,6 @@ happycamper.background = function() {
 };
 
 $(function() {
-    var background = new happycamper.background();
-    background.initialize();
+    happycamper.background = new happycamper.background();
+    happycamper.background.initialize();
 });
