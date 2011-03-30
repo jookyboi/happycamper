@@ -70,6 +70,16 @@
         </div>
     </script>
 
+    <script id="paste-message-template" type="text/x-jquery-tmpl">
+        <div class="activity paste">
+            <span class="text">
+                <pre>${body}</pre>
+            </span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
     <script id="lock-message-template" type="text/x-jquery-tmpl">
         <div class="activity lock">
             <span class="text">${user.name} has locked the room</span>

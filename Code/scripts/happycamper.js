@@ -145,7 +145,7 @@ happycamper.rooms = function() {
         var state = happycamper.state;
 
         // user already has room open
-        if (state.openRoomId !== -1) {
+        if (state.openRoomId !== -1 && isRoomActive(state.openRoomId)) {
             openRoom(state.openRoomId);
             return;
         }
@@ -190,7 +190,10 @@ happycamper.rooms = function() {
                 insertWhoMessage(messages, message, index);
                 $("#text-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.UPLOAD) {
+                insertWhoMessage(messages, message, index);
                 $("#upload-message-template").tmpl(message).appendTo($conversationBox);
+            } else if (message.type === TYPES.PASTE) {
+                $("#paste-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.LOCK) {
                 $("#lock-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.UNLOCK) {
@@ -232,7 +235,8 @@ happycamper.rooms = function() {
             var TYPES = happycamper.util.MESSAGE_TYPES;
 
             if ((lastMessage.type !== TYPES.TEXT &&
-                 lastMessage.type !== TYPES.PASTE) ||
+                 lastMessage.type !== TYPES.PASTE &&
+                 lastMessage.type !== TYPES.UPLOAD) ||
                 (lastMessage.user_id !== message.user_id)) {
                 $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
             }
@@ -301,6 +305,13 @@ happycamper.rooms = function() {
                 room.state = "locked";
                 return room;
             });
+    }
+
+    function isRoomActive(roomId) {
+        return jLinq.from(activeRooms)
+            .where(function(room) {
+                return room.id === roomId;
+            }).any();
     }
 
     function getRoomState(roomId) {
