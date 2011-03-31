@@ -136,6 +136,10 @@ happycamper.rooms = function() {
     // open room
     function wireOpenRoom() {
         $roomsList.find("div.room").unbind("click").click(function() {
+            // don't allow clicks when another is trying to open
+            if (!roomListRefreshEnabled)
+                return false;
+
             var $room = $(this);
             var roomId = parseInt($room.attr("roomid"));
 
@@ -144,6 +148,8 @@ happycamper.rooms = function() {
             } else {
                 openRoom(roomId);
             }
+
+            return false;
         });
     }
 
@@ -448,7 +454,10 @@ happycamper.rooms = function() {
 
     // public
     this.refreshRoom = function(roomId) {
-        templateMessages(roomId);
+        if (happycamper.state.openRoomId === roomId) {
+            // don't attempt to template for non-open room
+            templateMessages(roomId);
+        }
     };
 
     this.roomListRefreshEnabled = function() {

@@ -59,13 +59,15 @@ happycamper.background = function() {
         }
 
         if (state === null) {
-            happycamper.util.saveJson("state", happycamper.state);
+            saveState();
         } else {
             happycamper.state = state;
         }
     }
 
     function refreshLoop() {
+        loadState();
+
         // deep copy
         var newState = $.extend(true, {}, happycamper.state);
         setVisibleActiveRooms(newState);
@@ -113,7 +115,7 @@ happycamper.background = function() {
         }
 
         happycamper.state = newState;
-        happycamper.util.saveJson("state", happycamper.state);
+        saveState();
 
         callPopupFunction(function(popup) {
             popup.happycamper.refresh.roomsList();
@@ -175,7 +177,11 @@ happycamper.background = function() {
     }
 
     function saveStateAndRefresh(room, callRefresh) {
-        happycamper.util.saveJson("state", happycamper.state);
+        // don't call save/refresh on room that isn't active anymore
+        if (!isActiveRoom(room.id))
+            return;
+
+        saveState();
 
         if (callRefresh) {
             callPopupFunction(function(popup) {
@@ -184,7 +190,6 @@ happycamper.background = function() {
         }
 
         if (roomCallback !== null) {
-            console.log('callback called');
             roomCallback();
             roomCallback = null;
         }
@@ -331,6 +336,12 @@ happycamper.background = function() {
                .first();
     }
 
+    function isActiveRoom(roomId) {
+        return jLinq.from(happycamper.state.activeRooms)
+               .equals("id", roomId)
+               .any();
+    }
+
     function getRoomState(roomId) {
         return jLinq.from(happycamper.state.activeRoomStates)
             .equals("id", roomId)
@@ -348,6 +359,14 @@ happycamper.background = function() {
         if (getUser(user.id) === undefined) {
             happycamper.state.allUsers.push(user);
         }
+    }
+
+    function loadState() {
+        happycamper.state = happycamper.util.loadJson("state");
+    }
+
+    function saveState() {
+        happycamper.util.saveJson("state", happycamper.state);
     }
 };
 
