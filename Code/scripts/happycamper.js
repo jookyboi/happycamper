@@ -10,10 +10,15 @@ happycamper.rooms = function() {
     var $rooms = $("div.rooms");
     var $roomsList = $("div.rooms div.list");
     var $scrollbox = $roomsList.find("div.scrollbox");
+
+    var $joinRoom = $("div.content.join-room");
     var $joining = $("div.content.joining");
     var $main = $("div.content.main");
 
     var ROOM_HEIGHT = 29;
+
+    // used to prevent roomList from refreshing when joining room
+    var roomListRefreshEnabled = true;
 
     // on initialize
     templateRooms();
@@ -62,7 +67,7 @@ happycamper.rooms = function() {
         var upScrolling = false;
         var downScrolling = false;
 
-        scrollUp.click(function() {
+        scrollUp.unbind("click").click(function() {
             if (!$(this).hasClass("active"))
                 return;
 
@@ -81,7 +86,7 @@ happycamper.rooms = function() {
             }
         });
 
-        scrollDown.click(function() {
+        scrollDown.unbind("click").click(function() {
             if (!$(this).hasClass("active"))
                 return;
 
@@ -130,12 +135,14 @@ happycamper.rooms = function() {
 
     // open room
     function wireOpenRoom() {
-        $roomsList.find("div.room").click(function() {
+        $roomsList.find("div.room").unbind("click").click(function() {
             var $room = $(this);
-            var roomId = $room.attr("roomid");
+            var roomId = parseInt($room.attr("roomid"));
 
             if (!$room.hasClass("active")) {
                 joinRoom(roomId);
+            } else {
+                openRoom(roomId);
             }
         });
     }
@@ -151,17 +158,48 @@ happycamper.rooms = function() {
 
         // open first active
         var firstActiveRoom = jLinq.from(activeRooms).first();
-        openRoom(firstActiveRoom.id);
+
+        if (firstActiveRoom !== undefined) {
+            openRoom(firstActiveRoom.id);
+            return;
+        }
+
+        // nothing active
+        showOpenRoomMessage();
     }
 
     function openRoom(roomId) {
+        $joining.fadeOut();
         $main.show();
-        makeRoomButtonActive(roomId);
+
+        loadState();
+        happycamper.state.openRoomId = roomId;
+        saveState();
+
+        makeRoomButtonSelected(roomId);
         templateMessages(roomId);
         wireSendTextMessage();
+    }
 
-        happycamper.state.openRoomId = roomId;
-        happycamper.util.saveJson("state", happycamper.state);
+    function joinRoom(roomId) {
+        $joinRoom.hide();
+        $joining.fadeIn();
+
+        var executor = getExecutor();
+        var background = getBackground();
+        roomListRefreshEnabled = false;
+
+        executor.rooms.join(roomId, function() {
+            background.happycamper.background.refreshWithCallback(roomId, function() {
+                makeRoomButtonActive(roomId);
+                openRoom(roomId);
+                roomListRefreshEnabled = true;
+            });
+        });
+    }
+
+    function showOpenRoomMessage() {
+        $joinRoom.show();
     }
 
     // messages
@@ -264,7 +302,7 @@ happycamper.rooms = function() {
             }
         });
 
-        $main.find("div.send button").click(function() {
+        $main.find("div.send button").unbind("click").click(function() {
             sendMessage();
             return false;
         });
@@ -275,35 +313,39 @@ happycamper.rooms = function() {
         
         var message = $.trim($sendBox.val());
         if (message !== "") {
-            var background = chrome.extension.getBackgroundPage();
-            var executor = background.happycamper.background.executor();
+            var executor = getExecutor();
+            var background = getBackground();
+            var openRoomId = happycamper.state.openRoomId;
 
             // we're deliberate omitting the message type
             // according to the api, if the type is omitted,
             // messages with \n will be considered a paste
-            executor.rooms.speak(happycamper.state.openRoomId, {
+            executor.rooms.speak(openRoomId, {
                 message: {
                     body: message
                 }
             }, function() {
                // upon callback, refresh the data. background will auto-refresh the chat
-                background.happycamper.background.refresh();
+                background.happycamper.background.refreshRoom(openRoomId);
             });
 
             $sendBox.val("").focus();
         }
     }
 
-    // join room
+    // utilities
     function makeRoomButtonActive(roomId) {
+        $roomsList.find("div.room[roomid='" + roomId + "']")
+                  .removeClass("inactive")
+                       .removeClass("locked")
+                       .addClass("active");
+    }
+
+    function makeRoomButtonSelected(roomId) {
+        $roomsList.find("div.room.selected").removeClass("selected");
         $roomsList.find("div.room[roomid='" + roomId + "']").addClass("selected");
     }
 
-    function joinRoom(roomId) {
-
-    }
-
-    // utilities
     function scrollboxMarginTop() {
         return parseInt($scrollbox.css("marginTop").replace("px"));
     }
@@ -349,21 +391,19 @@ happycamper.rooms = function() {
 
     function isRoomActive(roomId) {
         return jLinq.from(activeRooms)
-            .where(function(room) {
-                return room.id === roomId;
-            }).any();
+            .equals("id", roomId)
+            .any();
     }
 
     function getRoomState(roomId) {
         return jLinq.from(happycamper.state.activeRoomStates)
-            .where(function(roomState) {
-                return roomState.id === roomId;
-            }).first();
+            .equals("id", roomId)
+            .first();
     }
 
     function wireLinks() {
         var $conversationBox = $main.find("div.conversation");
-        $conversationBox.find("div.activity a").click(function() {
+        $conversationBox.find("div.activity a").unbind("click").click(function() {
             chrome.tabs.create({
                 url: $(this).attr("href")
             });
@@ -390,11 +430,35 @@ happycamper.rooms = function() {
         return formattedMessage;
     }
 
+    function getExecutor() {
+        return getBackground().happycamper.background.executor();
+    }
+
+    function getBackground() {
+        return chrome.extension.getBackgroundPage();
+    }
+
+    function loadState() {
+        happycamper.state = happycamper.util.loadJson("state");
+    }
+
+    function saveState() {
+        happycamper.util.saveJson("state", happycamper.state);
+    }
+
     // public
     this.refreshRoom = function(roomId) {
         templateMessages(roomId);
-    }
+    };
+
+    this.roomListRefreshEnabled = function() {
+        return roomListRefreshEnabled;  
+    };
+
+    return this;
 };
+
+var happyCamperRooms;
 
 happycamper.refresh = function() {
     function getStateAndSettings() {
@@ -404,12 +468,14 @@ happycamper.refresh = function() {
 
     return {
         roomsList: function() {
-            getStateAndSettings();
-            happycamper.rooms();
+            if (happyCamperRooms.roomListRefreshEnabled()) {
+                getStateAndSettings();
+                happycamper.rooms();
+            }
         },
         room: function(roomId) {
             getStateAndSettings();
-            happycamper.rooms().refreshRoom(roomId);
+            happyCamperRooms.refreshRoom(roomId);
         }
     }
 }();
@@ -418,7 +484,7 @@ $(function() {
     // use whatever is in the latest localStorage
     happycamper.state = happycamper.util.loadJson("state");
     happycamper.settings = happycamper.util.loadJson("settings");
-    happycamper.rooms();
+    happyCamperRooms = happycamper.rooms();
 
     // todo: handle getting kicked out of deleted room
 });

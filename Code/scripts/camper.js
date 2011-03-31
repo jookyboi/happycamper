@@ -65,6 +65,10 @@ var Camper = Camper || {};
             execute(routes.rooms.getUploadObject(roomId, uploadMessageId), "GET", {}, callback);
         };
 
+        this.rooms.join = function(roomId, callback) {
+            execute(routes.rooms.join(roomId), "POST", {}, callback);
+        };
+
         this.rooms.speak = function(roomId, arguments, callback) {
             execute(routes.rooms.speak(roomId), "POST", arguments, callback);
         };
@@ -80,16 +84,25 @@ var Camper = Camper || {};
         function execute(routeUrl, requestType, data, callback) {
             var dummyPasword = "x";
             var url = "https://" + options.apikey + ":" + dummyPasword + "@" + options.url + routeUrl;
+            var successCalled = false;
 
             $.ajax({
                 url: url,
                 data: data,
                 type: requestType,
                 success: function(data) {
+                    successCalled = true;
                     callback(data);
                 },
                 error: function(data) {
                     // todo: error function
+                },
+                complete: function(jqXHR, textStatus) {
+                    // success doesn't get called with an empty response
+                    // this is needed for join to function correctly
+                    if (!successCalled) {
+                        callback(data);
+                    }
                 }
             });
 

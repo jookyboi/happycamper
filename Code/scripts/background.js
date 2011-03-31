@@ -18,6 +18,9 @@ happycamper.background = function() {
         apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
     });
 
+    // used for removing spinner once room has loaded
+    var roomCallback = null;
+
     // public
     this.initialize = function() {
         initSettings();
@@ -30,8 +33,14 @@ happycamper.background = function() {
         }, (happycamper.settings.refreshInterval * 1000));
     };
 
-    this.refresh = function() {
+    this.refreshRoom = function(roomId) {
+        var room = getActiveRoom(roomId);
+        getUsersAndMessagesForRoom(room);
+    };
+
+    this.refreshWithCallback = function(roomId, callback) {
         refreshLoop();
+        roomCallback = callback;
     };
 
     this.executor = function() {
@@ -173,6 +182,12 @@ happycamper.background = function() {
                 popup.happycamper.refresh.room(room.id);
             });
         }
+
+        if (roomCallback !== null) {
+            console.log('callback called');
+            roomCallback();
+            roomCallback = null;
+        }
     }
 
     // messages and users
@@ -310,11 +325,16 @@ happycamper.background = function() {
         }
     }
 
+    function getActiveRoom(roomId) {
+        return jLinq.from(happycamper.state.activeRooms)
+               .equals("id", roomId)
+               .first();
+    }
+
     function getRoomState(roomId) {
         return jLinq.from(happycamper.state.activeRoomStates)
-            .where(function(roomState) {
-                return roomState.id === roomId;
-            }).first();
+            .equals("id", roomId)
+            .first();
     }
 
     function getUser(userId) {
