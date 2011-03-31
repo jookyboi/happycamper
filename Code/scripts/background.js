@@ -114,7 +114,8 @@ happycamper.background = function() {
             return;
         }
 
-        happycamper.state = newState;
+        happycamper.state.visibleRooms = newState.visibleRooms;
+        happycamper.state.activeRooms = newState.activeRooms;
         saveState();
 
         callPopupFunction(function(popup) {
@@ -197,6 +198,7 @@ happycamper.background = function() {
 
     // messages and users
     function getUsersAndMessagesForRoom(room) {
+        loadState();
         var roomState = getRoomState(room.id);
 
         executor.rooms.show(room.id, function(usersData) {
