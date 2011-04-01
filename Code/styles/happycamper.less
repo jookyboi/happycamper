@@ -171,14 +171,52 @@ div.viewer {
                 border-left: 1px solid #ddd;
                 border-right: 1px solid #e5e5e5;
                 border-bottom: 1px solid #e5e5e5;
+                position: relative;
+
+                div.filters {
+                    background: #f7f7f7;
+                    height: 22px;
+                    padding: 3px;
+
+                    a {
+                        font-size: 8pt;
+                        color: #555;
+                        display: inline-block;
+                        margin-left: 2px;
+                        text-decoration: none;
+                    }
+
+                    a:hover {
+                        text-decoration: underline;
+                    }
+
+                    select {
+                        font-size: 8pt;
+                        border: 1px solid #ccc;
+                        outline: 0;
+
+                        option {
+                            padding: 0.2em;
+                        }
+                    }
+                }
+
+                div.overhang {
+                    width: 391px;
+                    height: 5px;
+                    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(99%,#ffffff));
+                    position: absolute;
+                    top: 28px;
+                    opacity: 0.3;
+                }
 
                 div.conversation {
                     float: left;
                     padding: 5px;
-                    width: 383px;
+                    width: 382px;
                     overflow-y: auto;
                     overflow-x: hidden;
-                    height: 218px;
+                    height: 190px;
 
                     div.activity {
                         padding: 3px;
@@ -258,10 +296,6 @@ div.viewer {
 
                 div.conversation::-webkit-scrollbar-thumb:hover {
                     background: -webkit-gradient(linear, left top, right top, color-stop(0%,#F3F3F3), color-stop(100%,#E3E3E3));
-                }
-
-                div.sidebar {
-                    float: right;
                 }
             }
 

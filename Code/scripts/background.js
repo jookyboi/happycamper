@@ -1,7 +1,15 @@
 var happycamper = {};
 
 happycamper.settings = {
-    refreshInterval: 10
+    refreshInterval: 10,
+    notifications: {
+        enabled: true,
+        showFor: -1
+    },
+    chat: {
+        showTimestamps: true,
+        showEnterLeave: true
+    }
 };
 
 happycamper.state = {
