@@ -5,11 +5,12 @@ body {
 }
 
 div.viewer {
-    width: 600px;
+    width: 615px;
 
     div.rooms {
         width: 150px;
         float: left;
+        margin-left: 15px;
         position: relative;
 
         div.header {
@@ -19,14 +20,12 @@ div.viewer {
         }
 
         div.settings, div.room {
-            padding: 5px 5px 5px 18px;
+            padding: 5px 5px 5px 21px;
         }
 
         div.settings {
-            border-top: 1px solid #eae59d;
-            border-bottom: 1px solid #eae59d;
-            border-right: 1px solid #eae59d;
-            background: #fcf8bb url("../images/settings.png") no-repeat 3px 7px;
+            border: 1px solid #eae59d;
+            background: #fcf8bb url("../images/settings.png") no-repeat 6px 7px;
             color: #726c24;
             cursor: pointer;
         }
@@ -69,7 +68,8 @@ div.viewer {
         }
 
         div.room {
-            border-top: 1px solid #ddd;
+            border-left: 1px solid #e9e9e9;
+            border-top: 1px solid #e9e9e9;
             border-right: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
             cursor: pointer;
@@ -77,16 +77,16 @@ div.viewer {
         }
 
         div.room.active {
-            background: #f1f1f1 url("../images/active.png") no-repeat 3px 8px;
+            background: #f1f1f1 url("../images/active.png") no-repeat 6px 8px;
         }
 
         div.room.inactive {
-             background: #f1f1f1 url("../images/inactive.png") no-repeat 3px 8px;
+             background: #f1f1f1 url("../images/inactive.png") no-repeat 6px 8px;
              color: #888;
         }
 
         div.room.locked {
-            background: #f1f1f1 url("../images/lock.png") no-repeat 3px 8px;
+            background: #f1f1f1 url("../images/lock.png") no-repeat 6px 8px;
         }
 
         div.room:hover {
@@ -94,7 +94,7 @@ div.viewer {
         }
 
         div.room.selected {
-            border: 0;
+            border: 1px solid #fff;
             background-color: #fff;
             cursor: default;
         }
@@ -204,7 +204,7 @@ div.viewer {
                 div.overhang {
                     width: 391px;
                     height: 5px;
-                    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(99%,#ffffff));
+                    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(99%,rgba(255, 255, 255, 0)));
                     position: absolute;
                     top: 28px;
                     opacity: 0.3;
@@ -336,7 +336,7 @@ div.viewer {
         opacity: 0.7;
         z-index: 1000;
         position: absolute;
-        left: 150px;
+        left: 165px;
     }
 }
 
