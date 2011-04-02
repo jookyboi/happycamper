@@ -14,6 +14,8 @@ happycamper.rooms = function() {
     var $joinRoom = $("div.content.join-room");
     var $joining = $("div.content.joining");
     var $main = $("div.content.main");
+    var $usersFilter = $main.find("div.filters select.users-filter");
+    var $typesFilter = $main.find("div.filters select.types-filter");
 
     var ROOM_HEIGHT = 29;
 
@@ -142,11 +144,12 @@ happycamper.rooms = function() {
 
             var $room = $(this);
             var roomId = parseInt($room.attr("roomid"));
+            var roomState = getRoomState(roomId);
 
-            if (!$room.hasClass("active")) {
-                joinRoom(roomId);
-            } else {
+            if ($room.hasClass("active") && roomState !== undefined) {
                 openRoom(roomId);
+            } else {
+                joinRoom(roomId);
             }
 
             return false;
@@ -158,7 +161,7 @@ happycamper.rooms = function() {
 
         // user already has room open
         if (state.openRoomId !== -1 && isRoomActive(state.openRoomId)) {
-            openRoom(state.openRoomId);
+            joinOrOpenRoom(state.openRoomId);
             return;
         }
 
@@ -166,12 +169,22 @@ happycamper.rooms = function() {
         var firstActiveRoom = jLinq.from(activeRooms).first();
 
         if (firstActiveRoom !== undefined) {
-            openRoom(firstActiveRoom.id);
+            joinOrOpenRoom(firstActiveRoom.id);
             return;
         }
 
         // nothing active
         showOpenRoomMessage();
+    }
+
+    function joinOrOpenRoom(roomId) {
+        var roomState = getRoomState(roomId);
+
+        if (roomState === undefined) {
+            joinRoom(roomId);
+        } else {
+            openRoom(roomId);
+        }
     }
 
     function openRoom(roomId) {
@@ -185,6 +198,9 @@ happycamper.rooms = function() {
         makeRoomButtonSelected(roomId);
         templateMessages(roomId);
         wireSendTextMessage();
+
+        templateFilters();
+        wireFilters();
     }
 
     function joinRoom(roomId) {
@@ -215,7 +231,7 @@ happycamper.rooms = function() {
         if (roomState === undefined)
             return;
 
-        var messages = roomState.messages;
+        var messages = filteredMessages(roomState.messages);
 
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.html("");
@@ -238,6 +254,7 @@ happycamper.rooms = function() {
                 insertWhoMessage(messages, message, index);
                 $("#upload-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.PASTE) {
+                insertWhoMessage(messages, message, index);
                 $("#paste-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.LOCK) {
                 $("#lock-message-template").tmpl(message).appendTo($conversationBox);
@@ -300,7 +317,7 @@ happycamper.rooms = function() {
     function wireSendTextMessage() {
         var $sendBox = $main.find("div.send textarea");
 
-        $sendBox.keydown(function(event) {
+        $sendBox.unbind("keydown").keydown(function(event) {
             // pressed enter
             if (event.keyCode == "13") {
                 sendMessage();
@@ -339,12 +356,146 @@ happycamper.rooms = function() {
         }
     }
 
+    // chat filters
+    function templateFilters() {
+        var state = happycamper.state;
+        var roomState = getRoomState(state.openRoomId);
+
+        templateUsersFilter(roomState);
+        templateTypesFilter(roomState);
+    }
+
+    function templateUsersFilter(roomState) {
+         var messageUsers = jLinq.from(roomState.messages)
+            .where(function(message) {
+                // only these message types have users
+                return messageContainsUser(message);
+            }).select(function(message) {
+                return message.user;
+            });
+
+        messageUsers = uniqueOfJsonArray(messageUsers);
+
+        $usersFilter.html("");
+
+        // default option
+        var filterOptionTemplate = $("#filter-option-template");
+
+        filterOptionTemplate.tmpl({
+            id: "all",
+            name: "All users"
+        }).appendTo($usersFilter);
+
+        filterOptionTemplate.tmpl(messageUsers).appendTo($usersFilter);
+    }
+
+    function templateTypesFilter(roomState) {
+        var messageTypes = jLinq.from(roomState.messages)
+            .where(function(message) {
+                return messageHasBody(message);
+            }).select(function(message) {
+                return {
+                    id: message.type,
+                    name: nameForType(message.type)
+                };
+            });
+
+        messageTypes = uniqueOfJsonArray(messageTypes);
+
+        $typesFilter.html("");
+
+        // default option
+        var filterOptionTemplate = $("#filter-option-template");
+
+        filterOptionTemplate.tmpl({
+            id: "all",
+            name: "All types"
+        }).appendTo($typesFilter);
+
+        filterOptionTemplate.tmpl(messageTypes).appendTo($typesFilter);
+    }
+
+    function nameForType(type) {
+        var TYPES = happycamper.util.MESSAGE_TYPES;
+
+        if (type === TYPES.TEXT) return "Text";
+        if (type === TYPES.PASTE) return "Paste";
+        if (type === TYPES.UPLOAD) return "Upload";
+    }
+
+    function wireFilters() {
+        wireUsersFilter();
+        wireTypesFilter();
+    }
+
+    function wireUsersFilter() {
+        var state = happycamper.state;
+
+        $usersFilter.unbind("change").change(function() {
+            templateMessages(state.openRoomId);
+        });
+    }
+
+    function wireTypesFilter() {
+        var state = happycamper.state;
+
+        $typesFilter.unbind("change").change(function() {
+            templateMessages(state.openRoomId);
+        });
+
+        $main.find("div.filters a.reset-filters").unbind("click").click(resetFilters);
+    }
+
+    function resetFilters() {
+        $usersFilter.val("all").trigger("change");
+        $typesFilter.val("all").trigger("change");
+    }
+
+    function filteredMessages(messages) {
+        var usersFilter = $usersFilter.val();
+        var typesFilter = $typesFilter.val();
+
+        // hasn't been templated yet
+        if (isNotFiltered())
+            return messages;
+
+        var userFilteredMessages = jLinq.from(messages)
+            .where(function(message) {
+                if (usersFilter === "all")
+                    return true;
+
+                if (!messageContainsUser(message))
+                    return false;
+
+                return message.user.id === parseInt(usersFilter);
+            }).select();
+
+        return jLinq.from(userFilteredMessages)
+            .where(function(message) {
+                if (typesFilter === "all")
+                    return true;
+
+                if (!messageHasBody(message))
+                    return false;
+
+                return message.type === typesFilter;
+                
+            }).select();
+    }
+
+    function isNotFiltered() {
+        var usersFilter = $usersFilter.val();
+        var typesFilter = $typesFilter.val();
+
+        return (usersFilter === null || typesFilter === null);
+    }
+
     // utilities
     function makeRoomButtonActive(roomId) {
         $roomsList.find("div.room[roomid='" + roomId + "']")
                   .removeClass("inactive")
-                       .removeClass("locked")
-                       .addClass("active");
+                  .removeClass("locked")
+                  .addClass("active");
     }
 
     function makeRoomButtonSelected(roomId) {
@@ -407,6 +558,27 @@ happycamper.rooms = function() {
             .first();
     }
 
+    function messageContainsUser(message) {
+        var TYPES = happycamper.util.MESSAGE_TYPES;
+
+        return (message.type === TYPES.ENTER ||
+                message.type === TYPES.LEAVE ||
+                message.type === TYPES.KICK ||
+                message.type === TYPES.TEXT ||
+                message.type === TYPES.PASTE ||
+                message.type === TYPES.UPLOAD ||
+                message.type === TYPES.LOCK ||
+                message.type === TYPES.UNLOCK);
+    }
+
+    function messageHasBody(message) {
+        var TYPES = happycamper.util.MESSAGE_TYPES;
+
+        return (message.type === TYPES.TEXT ||
+                message.type === TYPES.PASTE ||
+                message.type === TYPES.UPLOAD);
+    }
+
     function wireLinks() {
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.find("div.activity a").unbind("click").click(function() {
@@ -450,6 +622,17 @@ happycamper.rooms = function() {
 
     function saveState() {
         happycamper.util.saveJson("state", happycamper.state);
+    }
+
+    function uniqueOfJsonArray(array) {
+        var map = {}, index, length = array.length, unique = [];
+
+        for (index = 0; index < length; index++) {
+            map[JSON.stringify(array[index])] = array[index];
+        }
+        
+        for (index in map) unique.push(map[index]);
+        return unique;
     }
 
     // public

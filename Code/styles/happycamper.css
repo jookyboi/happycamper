@@ -164,6 +164,12 @@ div.viewer div.content div.tab-content div.group div.filters select {
 div.viewer div.content div.tab-content div.group div.filters select option {
   padding: 0.2em;
 }
+div.viewer div.content div.tab-content div.group div.filters select.users-filter {
+  width: 80px;
+}
+div.viewer div.content div.tab-content div.group div.filters select.types-filter {
+  width: 80px;
+}
 div.viewer div.content div.tab-content div.group div.overhang {
   width: 391px;
   height: 5px;

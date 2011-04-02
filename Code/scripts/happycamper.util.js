@@ -1,7 +1,7 @@
 happycamper.util = function() {
     return {
         saveJson: function(key, json) {
-            console.log(json);
+            //console.log(json);
             localStorage.removeItem(key);
             localStorage[key] = JSON.stringify(json);
         },

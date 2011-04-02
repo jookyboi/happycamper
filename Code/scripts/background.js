@@ -43,7 +43,7 @@ happycamper.background = function() {
 
     this.refreshRoom = function(roomId) {
         var room = getActiveRoom(roomId);
-        getUsersAndMessagesForRoom(room);
+        getUsersAndMessagesForRoom(room, true);
     };
 
     this.refreshWithCallback = function(roomId, callback) {
@@ -142,20 +142,22 @@ happycamper.background = function() {
         for (var index = 0, length = state.activeRooms.length; index < length; index++) {
             var room = state.activeRooms[index];
 
-            if (getRoomState(room.id) === undefined) {
-                state.activeRoomStates.push({
+            if (getActiveRoomState(room.id) === undefined) {
+                happycamper.state.activeRoomStates.push({
                     id: room.id,
                     users: [],
                     messages: []
                 });
-            }
 
-            getUsersAndMessagesForRoom(room);
+                saveState();
+            }
+            
+            getUsersAndMessagesForRoom(room, false);
         }
     }
 
     function saveStateOnLoadComplete(room, callRefresh) {
-        var messages = getRoomState(room.id).messages;
+        var messages = getActiveRoomState(room.id).messages;
 
         if (unnamedMessagesCount(messages) > 0 || noUploadMessagesCount(messages) > 0) {
             // not all users and files have been set
@@ -205,9 +207,11 @@ happycamper.background = function() {
     }
 
     // messages and users
-    function getUsersAndMessagesForRoom(room) {
-        loadState();
-        var roomState = getRoomState(room.id);
+    function getUsersAndMessagesForRoom(room, loadState) {
+        if (loadState)
+            loadState();
+        
+        var roomState = getActiveRoomState(room.id);
 
         executor.rooms.show(room.id, function(usersData) {
             roomState.users = usersData.room.users;
@@ -218,7 +222,7 @@ happycamper.background = function() {
     }
 
     function getMessagesForRoom(room) {
-        var roomState = getRoomState(room.id);
+        var roomState = getActiveRoomState(room.id);
         var arguments = {};
         var fullRefresh = true;
 
@@ -352,7 +356,7 @@ happycamper.background = function() {
                .any();
     }
 
-    function getRoomState(roomId) {
+    function getActiveRoomState(roomId) {
         return jLinq.from(happycamper.state.activeRoomStates)
             .equals("id", roomId)
             .first();
