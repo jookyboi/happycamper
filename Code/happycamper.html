@@ -10,6 +10,8 @@
     <script type="text/javascript" src="scripts/plugins/json2.js"></script>
     <script type="text/javascript" src="scripts/plugins/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="scripts/plugins/date.format.js"></script>
+    <script type="text/javascript" src="scripts/plugins/md5.js"></script>
+    <script type="text/javascript" src="scripts/plugins/jquery.gravatar.js"></script>
     <script type="text/javascript" src="scripts/happycamper.js"></script>
     <script type="text/javascript" src="scripts/happycamper.util.js"></script>
 
@@ -20,6 +22,7 @@
         </div>
     </script>
 
+    <!-- chat tab templates -->
     <script id="enter-message-template" type="text/x-jquery-tmpl">
         <div class="activity enter">
             <span class="text">${user.name} entered the room</span>
@@ -100,6 +103,18 @@
     <script id="filter-option-template" type="text/x-jquery-tmpl">
         <option value="${id}" {{if id == "all"}}selected="selected"{{/if}}>${name}</option>
     </script>
+
+    <!-- user tab templates -->
+    <script id="user-template" type="text/x-jquery-tmpl">
+        <div class="user">
+            <div class="attributes">
+                <span class="name">${name}</span>
+                <span class="email">${email_address}</span>
+            </div>
+            <img src="${gravatar}" />
+            <div class="clear"></div>
+        </div>
+    </script>
 </head>
 <body>
 
@@ -138,14 +153,14 @@
 
     <div class="content main" style="display: none;">
         <ul class="tabs">
-            <li class="chat selected">Chat</li>
-            <li class="users">Users</li>
-            <li class="files">Files</li>
-            <li class="search">Search</li>
+            <li class="chat selected" tab="chat">Chat</li>
+            <li class="users" tab="users">Users</li>
+            <li class="files" tab="files">Files</li>
+            <li class="search" tab="search">Search</li>
         </ul>
         <div class="tab-content chat">
             <div class="group">
-                <div class="filters">
+                <div class="info filters">
                     <select class="users-filter"></select>
                     <select class="types-filter"></select>
                     <a href="#" class="reset-filters">reset</a>
@@ -160,7 +175,18 @@
                 <div class="clear"></div>
             </div>
         </div>
-        <div class="tab-content starred" style="display: none;"></div>
+        <div class="tab-content users" style="display: none;">
+            <div class="group">
+                <div class="info title">
+                    Users present in room
+                </div>
+                <div class="overhang"></div>
+                <div class="list"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="tab-content files" style="display: none;"></div>
+        <div class="tab-content search" style="display: none;"></div>
     </div>
 </div>
 

@@ -34,6 +34,7 @@ happycamper.rooms = function() {
         templateLockedRooms();
         templateInactiveRooms();
 
+        wireMainTabs();
         wireOpenRoom();
         openDefaultRoom();
     }
@@ -50,7 +51,23 @@ happycamper.rooms = function() {
         $("#room-template").tmpl(getInactiveRooms()).appendTo($scrollbox);
     }
 
-    // up down buttons
+    // switch tabs
+    function wireMainTabs() {
+        $main.find("ul.tabs li").unbind("click").click(function() {
+            $main.find("ul.tabs li.selected").removeClass("selected");
+            $(this).addClass("selected");
+
+            $main.find("div.tab-content").hide();
+            $main.find("div.tab-content." + $(this).attr("tab")).show();
+
+            if ($(this).hasClass("chat"))
+                scrollToConversationBottom();
+
+            return false;
+        });
+    }
+
+    // rooms navigation
     function wireUpDownButtons() {
         if (!buttonsNecessary()) {
             return;
@@ -201,6 +218,10 @@ happycamper.rooms = function() {
 
         templateFilters();
         wireFilters();
+
+        templateUsers(roomId);
+
+        gotoChatTab();
     }
 
     function joinRoom(roomId) {
@@ -222,6 +243,10 @@ happycamper.rooms = function() {
 
     function showOpenRoomMessage() {
         $joinRoom.show();
+    }
+
+    function gotoChatTab() {
+        $main.find("ul.tabs li.chat").trigger("click");
     }
 
     // messages
@@ -490,6 +515,30 @@ happycamper.rooms = function() {
         return (usersFilter === null || typesFilter === null);
     }
 
+    // users
+    function templateUsers(roomId) {
+        var roomState = getRoomState(roomId);
+
+        if (roomState === undefined)
+            return;
+
+        var $users = $main.find("div.tab-content.users div.list");
+        $users.html("");
+
+        var users = jLinq.from(roomState.users)
+            .select(function(user) {
+                user.gravatar = $.gravatar(user.email_address, {
+                    size: "32",
+                    rating: "pg",
+                    image: "identicon"
+                });
+
+                return user;
+            });
+
+        $("#user-template").tmpl(users).appendTo($users);
+    }
+
     // utilities
     function makeRoomButtonActive(roomId) {
         $roomsList.find("div.room[roomid='" + roomId + "']")
@@ -636,10 +685,17 @@ happycamper.rooms = function() {
     }
 
     // public
-    this.refreshRoom = function(roomId) {
+    this.refreshRoomChat = function(roomId) {
         if (happycamper.state.openRoomId === roomId) {
             // don't attempt to template for non-open room
             templateMessages(roomId);
+        }
+    };
+
+    this.refreshRoomUsers = function(roomId) {
+        if (happycamper.state.openRoomId === roomId) {
+            // don't attempt to template for non-open room
+            templateUsers(roomId);
         }
     };
 
@@ -665,9 +721,13 @@ happycamper.refresh = function() {
                 happycamper.rooms();
             }
         },
-        room: function(roomId) {
+        roomChat: function(roomId) {
             getStateAndSettings();
-            happyCamperRooms.refreshRoom(roomId);
+            happyCamperRooms.refreshRoomChat(roomId);
+        },
+        roomUsers: function(roomId) {
+            getStateAndSettings();
+            happyCamperRooms.refreshRoomUsers(roomId);
         }
     }
 }();
@@ -677,6 +737,6 @@ $(function() {
     happycamper.state = happycamper.util.loadJson("state");
     happycamper.settings = happycamper.util.loadJson("settings");
     happyCamperRooms = happycamper.rooms();
-
+    
     // todo: handle getting kicked out of deleted room
 });

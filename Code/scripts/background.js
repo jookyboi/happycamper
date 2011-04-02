@@ -43,7 +43,7 @@ happycamper.background = function() {
 
     this.refreshRoom = function(roomId) {
         var room = getActiveRoom(roomId);
-        getUsersAndMessagesForRoom(room, true);
+        getUsersAndMessagesForRoom(room);
     };
 
     this.refreshWithCallback = function(roomId, callback) {
@@ -152,7 +152,7 @@ happycamper.background = function() {
                 saveState();
             }
             
-            getUsersAndMessagesForRoom(room, false);
+            getUsersAndMessagesForRoom(room);
         }
     }
 
@@ -196,7 +196,7 @@ happycamper.background = function() {
 
         if (callRefresh) {
             callPopupFunction(function(popup) {
-                popup.happycamper.refresh.room(room.id);
+                popup.happycamper.refresh.roomChat(room.id);
             });
         }
 
@@ -207,14 +207,18 @@ happycamper.background = function() {
     }
 
     // messages and users
-    function getUsersAndMessagesForRoom(room, loadState) {
-        if (loadState)
-            loadState();
-        
+    function getUsersAndMessagesForRoom(room) {
         var roomState = getActiveRoomState(room.id);
 
         executor.rooms.show(room.id, function(usersData) {
+            var usersChanged = JSON.stringify(roomState.users) === JSON.stringify(usersData.room.users);
             roomState.users = usersData.room.users;
+
+            if (usersChanged) {
+                callPopupFunction(function(popup) {
+                    popup.happycamper.refresh.roomUsers(room.id);
+                });
+            }
 
             // must have users before messages
             getMessagesForRoom(room);
