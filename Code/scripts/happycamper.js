@@ -220,6 +220,8 @@ happycamper.rooms = function() {
         wireFilters();
 
         templateUsers(roomId);
+        templateFiles(roomId);
+        wireFileLinks();
 
         gotoChatTab();
     }
@@ -266,6 +268,8 @@ happycamper.rooms = function() {
         var TYPES = happycamper.util.MESSAGE_TYPES;
 
         $.each(messages, function(index, message) {
+            fillInForEmptyUser(message, roomState);
+
             if (message.type === TYPES.ENTER) {
                 $("#enter-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.LEAVE || message.type === TYPES.KICK) {
@@ -289,9 +293,17 @@ happycamper.rooms = function() {
         });
 
         scrollToConversationBottom();
-        wireLinks();
+        wireMessageLinks();
     }
 
+    function fillInForEmptyUser(message, roomState) {
+        // if for any reason user doesn't get populated (this is rare)
+        if (messageContainsUser(message) && message.user === null) {
+            message.user = getBackground().happycamper.background.getUserForMessage(message, roomState);
+            saveState();
+        }
+    }
+    
     function formatTimestampMessages(messages) {
         var timestampMessages = jLinq.from(messages)
             .where(function(message) {
@@ -539,6 +551,39 @@ happycamper.rooms = function() {
         $("#user-template").tmpl(users).appendTo($users);
     }
 
+    // files
+    function templateFiles(roomId) {
+        var roomState = getRoomState(roomId);
+
+        if (roomState === undefined)
+            return;
+
+        var $files = $main.find("div.tab-content.files div.list");
+        $files.html("");
+
+        var files = jLinq.from(roomState.recentUploads)
+            .select(function(upload) {
+                upload.user = jLinq.from(happycamper.state.allUsers)
+                                   .equals("id", upload.user_id).first();
+
+                return upload;
+            });
+
+        $("#file-template").tmpl(files).appendTo($files);
+    }
+
+    function wireFileLinks() {
+        var $files = $main.find("div.tab-content.files div.list");
+
+        $files.find("a").unbind("click").click(function() {
+            chrome.tabs.create({
+                url: $(this).attr("href")
+            });
+
+            return false;
+        });
+    }
+
     // utilities
     function makeRoomButtonActive(roomId) {
         $roomsList.find("div.room[roomid='" + roomId + "']")
@@ -628,7 +673,7 @@ happycamper.rooms = function() {
                 message.type === TYPES.UPLOAD);
     }
 
-    function wireLinks() {
+    function wireMessageLinks() {
         var $conversationBox = $main.find("div.conversation");
         $conversationBox.find("div.activity a").unbind("click").click(function() {
             chrome.tabs.create({
@@ -694,8 +739,13 @@ happycamper.rooms = function() {
 
     this.refreshRoomUsers = function(roomId) {
         if (happycamper.state.openRoomId === roomId) {
-            // don't attempt to template for non-open room
             templateUsers(roomId);
+        }
+    };
+
+    this.refreshRoomFiles = function(roomId) {
+        if (happycamper.state.openRoomId === roomId) {
+            templateFiles(roomId);
         }
     };
 
@@ -728,6 +778,10 @@ happycamper.refresh = function() {
         roomUsers: function(roomId) {
             getStateAndSettings();
             happyCamperRooms.refreshRoomUsers(roomId);
+        },
+        roomFiles: function(roomId) {
+            getStateAndSettings();
+            happyCamperRooms.refreshRoomFiles(roomId);
         }
     }
 }();

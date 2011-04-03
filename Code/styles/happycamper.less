@@ -355,7 +355,8 @@ div.viewer {
             }
         }
 
-        div.tab-content.users {
+        div.tab-content.users,
+        div.tab-content.files {
             div.group {
                 height: 280px;
 
@@ -364,24 +365,28 @@ div.viewer {
                     overflow-y: auto;
                     overflow-x: hidden;
 
-                    div.user {
+                    div.user,
+                    div.file {
                         padding: 10px 6px;
                         border-bottom: 1px solid #f3f3f3;
                         cursor: default;
 
                         div.attributes {
                             float: left;
+                            width: 335px;
 
                             span {
                                 display: block;
                             }
 
-                            span.email {
+                            span.email,
+                            span.uploaded-by {
                                 color: #888;
                             }
                         }
 
-                        img {
+                        img,
+                        a.download {
                             float: right;
                         }
                     }

@@ -61,6 +61,10 @@ var Camper = Camper || {};
             execute(routes.rooms.recentMessages(roomId), "GET", arguments, callback);
         };
 
+        this.rooms.recentUploads = function(roomId, callback) {
+            execute(routes.rooms.recentUploads(roomId), "GET", {}, callback);
+        };
+
         this.rooms.getUploadObject = function(roomId, uploadMessageId, callback) {
             execute(routes.rooms.getUploadObject(roomId, uploadMessageId), "GET", {}, callback);
         };

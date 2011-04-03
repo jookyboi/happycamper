@@ -104,7 +104,7 @@
         <option value="${id}" {{if id == "all"}}selected="selected"{{/if}}>${name}</option>
     </script>
 
-    <!-- user tab templates -->
+    <!-- users tab templates -->
     <script id="user-template" type="text/x-jquery-tmpl">
         <div class="user">
             <div class="attributes">
@@ -112,6 +112,20 @@
                 <span class="email">${email_address}</span>
             </div>
             <img src="${gravatar}" />
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <!-- files tab templates -->
+    <script id="file-template" type="text/x-jquery-tmpl">
+        <div class="file">
+            <div class="attributes">
+                <span class="filename">
+                    <a href="${full_url}">${name}</a> (${size} kb)
+                </span>
+                <span class="uploaded-by">${user.name} at ${timestamp}</span>
+            </div>
+            <a href="${full_url}" class="download"><img src="images/files_large.png" /></a>
             <div class="clear"></div>
         </div>
     </script>
@@ -185,7 +199,16 @@
                 <div class="clear"></div>
             </div>
         </div>
-        <div class="tab-content files" style="display: none;"></div>
+        <div class="tab-content files" style="display: none;">
+            <div class="group">
+                <div class="info title">
+                    5 most recent uploads
+                </div>
+                <div class="overhang"></div>
+                <div class="list"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
         <div class="tab-content search" style="display: none;"></div>
     </div>
 </div>

@@ -51,6 +51,8 @@ happycamper.background = function() {
         roomCallback = callback;
     };
 
+    this.getUserForMessage = getUserForMessage;
+
     this.executor = function() {
         return executor;  
     };
@@ -146,13 +148,15 @@ happycamper.background = function() {
                 happycamper.state.activeRoomStates.push({
                     id: room.id,
                     users: [],
-                    messages: []
+                    messages: [],
+                    recentUploads: []
                 });
 
                 saveState();
             }
             
             getUsersAndMessagesForRoom(room);
+            getRecentUploadsForRoom(room);
         }
     }
 
@@ -299,9 +303,7 @@ happycamper.background = function() {
 
     function getUserFromAllUsers(userId) {
         jLinq.from(happycamper.state.allUsers)
-            .where(function(user) {
-                return user.id === userId;
-            }).first();
+             .equals("id", userId).first();
     }
 
     function setCampfireUserForMessage(message) {
@@ -332,6 +334,35 @@ happycamper.background = function() {
                 message.upload.size = message.upload.byte_size / 1000;
             });
         });
+    }
+
+    // files
+    function getRecentUploadsForRoom(room) {
+        var roomState = getActiveRoomState(room.id);
+
+        executor.rooms.recentUploads(room.id, function(uploadsData) {
+            var formattedUploads = getFormattedUploads(uploadsData.uploads);
+            var filesChanged = JSON.stringify(roomState.recentUploads) === JSON.stringify(formattedUploads);
+
+            roomState.recentUploads = formattedUploads;
+
+            if (filesChanged) {
+                callPopupFunction(function(popup) {
+                    popup.happycamper.refresh.roomFiles(room.id);
+                });
+            }
+
+            saveState();
+        });
+    }
+
+    function getFormattedUploads(uploads) {
+        $.each(uploads, function(index, upload) {
+            upload.timestamp = dateFormat(upload.created_at, "shortTime") + ", " + dateFormat(upload.created_at, "mmmm d");
+            upload.size = upload.byte_size / 1000;
+        });
+
+        return uploads;
     }
 
     // notifications
