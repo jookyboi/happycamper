@@ -21,9 +21,16 @@ happycamper.state = {
 };
 
 happycamper.background = function() {
+    /*
     var executor = new Camper.Executor({
         url: "ruijiang.campfirenow.com",
         apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
+    });
+    */
+
+    var executor = new Camper.Executor({
+       url: "zssd.campfirenow.com",
+       apikey: "ae0639b97a54548f298845b9a9075b87892259a4"
     });
 
     // used for removing spinner once room has loaded
@@ -161,12 +168,19 @@ happycamper.background = function() {
     }
 
     function saveStateOnLoadComplete(room, callRefresh) {
-        var messages = getActiveRoomState(room.id).messages;
+        var roomState = getActiveRoomState(room.id);
+        var messages = roomState.messages;
+        var uploads = roomState.recentUploads;
 
-        if (unnamedMessagesCount(messages) > 0 || noUploadMessagesCount(messages) > 0) {
+        if (unnamedMessagesCount(messages) > 0 ||
+            noUploadMessagesCount(messages) > 0 ||
+            unnamedUploadsCount(uploads) > 0) {
             // not all users and files have been set
             var checkUnnamedInterval = setInterval(function() {
-                if (unnamedMessagesCount(messages) === 0 && noUploadMessagesCount(messages) === 0) {
+                if (unnamedMessagesCount(messages) === 0 &&
+                    noUploadMessagesCount(messages) === 0 &&
+                    unnamedUploadsCount(uploads) === 0) {
+                    
                     saveStateAndRefresh(room, callRefresh);
                     clearInterval(checkUnnamedInterval);
                 }
@@ -188,6 +202,13 @@ happycamper.background = function() {
             .where(function(message) {
                 return (message.type === happycamper.util.MESSAGE_TYPES.UPLOAD &&
                         message.upload === undefined);
+            }).count();
+    }
+
+    function unnamedUploadsCount(uploads) {
+        return jLinq.from(uploads)
+            .where(function(upload) {
+                return (upload.user === undefined || upload.user === null);
             }).count();
     }
 
@@ -360,9 +381,33 @@ happycamper.background = function() {
         $.each(uploads, function(index, upload) {
             upload.timestamp = dateFormat(upload.created_at, "shortTime") + ", " + dateFormat(upload.created_at, "mmmm d");
             upload.size = upload.byte_size / 1000;
+            upload.user = getUserForUpload(upload);
         });
 
         return uploads;
+    }
+
+    function getUserForUpload(upload) {
+        var userId = upload.user_id;
+
+        if (userId === null)
+            return null;
+
+        var user = getUserFromAllUsers(userId);
+
+        if (user !== undefined)
+            return user;
+
+        // get from campfire
+        setCampfireUserForUpload(upload);
+        return null;
+    }
+
+    function setCampfireUserForUpload(upload) {
+        executor.users.show(upload.user_id, function(userData) {
+            upload.user = userData.user;
+            saveState();
+        });
     }
 
     // notifications
