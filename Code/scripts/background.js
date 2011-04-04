@@ -21,17 +21,18 @@ happycamper.state = {
 };
 
 happycamper.background = function() {
-    /*
+
     var executor = new Camper.Executor({
         url: "ruijiang.campfirenow.com",
         apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
     });
-    */
 
+    /*
     var executor = new Camper.Executor({
        url: "zssd.campfirenow.com",
        apikey: "ae0639b97a54548f298845b9a9075b87892259a4"
     });
+    */
 
     // used for removing spinner once room has loaded
     var roomCallback = null;
@@ -172,15 +173,10 @@ happycamper.background = function() {
         var messages = roomState.messages;
         var uploads = roomState.recentUploads;
 
-        if (unnamedMessagesCount(messages) > 0 ||
-            noUploadMessagesCount(messages) > 0 ||
-            unnamedUploadsCount(uploads) > 0) {
+        if (missingInfo(messages, uploads)) {
             // not all users and files have been set
             var checkUnnamedInterval = setInterval(function() {
-                if (unnamedMessagesCount(messages) === 0 &&
-                    noUploadMessagesCount(messages) === 0 &&
-                    unnamedUploadsCount(uploads) === 0) {
-                    
+                if (!missingInfo(messages, uploads)) {
                     saveStateAndRefresh(room, callRefresh);
                     clearInterval(checkUnnamedInterval);
                 }
@@ -190,26 +186,44 @@ happycamper.background = function() {
         }
     }
 
+    function missingInfo(messages, uploads) {
+        return unnamedMessagesCount(messages) > 0 ||
+               noUploadMessagesCount(messages) > 0 ||
+               unnamedUploadsCount(uploads) > 0;
+    }
+
     function unnamedMessagesCount(messages) {
+        return unnamedMessages(messages).length;
+    }
+
+    function unnamedMessages(messages) {
         return jLinq.from(messages)
             .where(function(message) {
                 return (message.user_id !== null && message.user === null)
-            }).count();
+            }).select();
     }
 
     function noUploadMessagesCount(messages) {
+        return noUploadMessages(messages).length;
+    }
+
+    function noUploadMessages(messages) {
         return jLinq.from(messages)
             .where(function(message) {
                 return (message.type === happycamper.util.MESSAGE_TYPES.UPLOAD &&
                         message.upload === undefined);
-            }).count();
+            }).select();
     }
 
     function unnamedUploadsCount(uploads) {
+        return unnamedUploads(uploads).length;
+    }
+
+    function unnamedUploads(uploads) {
         return jLinq.from(uploads)
             .where(function(upload) {
                 return (upload.user === undefined || upload.user === null);
-            }).count();
+            }).select();
     }
 
     function saveStateAndRefresh(room, callRefresh) {
@@ -310,7 +324,7 @@ happycamper.background = function() {
             setUser(user);
             return user;
         }
-        
+
         // user not present, find within allUsers
         user = getUserFromAllUsers(userId);
 
@@ -319,6 +333,7 @@ happycamper.background = function() {
 
         // get from campfire
         setCampfireUserForMessage(message);
+        
         return null;
     }
 

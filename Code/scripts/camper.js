@@ -27,7 +27,8 @@ var Camper = Camper || {};
         users: {
             show: function(userId) { return "/users/" + userId + ".json"; },
             showAuthenticatedUser: function() { return "/users/me.json"; }
-        }
+        },
+        search: function(term) { return "/search/" + encodeURIComponent(term) + ".json"; }
     };
 
     Camper.Executor = function(settings) {
@@ -82,6 +83,11 @@ var Camper = Camper || {};
 
         this.users.show = function(userId, callback) {
             execute(routes.users.show(userId), "GET", {}, callback);  
+        };
+
+        // search
+        this.search = function(term, callback) {
+            execute(routes.search(term), "GET", {}, callback);
         };
 
         //// Private functions

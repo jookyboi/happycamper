@@ -180,10 +180,26 @@ div.viewer div.content div.tab-content div.group div.info select.users-filter {
 div.viewer div.content div.tab-content div.group div.info select.types-filter {
   width: 80px;
 }
+div.viewer div.content div.tab-content div.group div.info input[type="text"].search-messages {
+  width: 377px;
+  outline: 0;
+  border: 1px solid #ddd;
+  padding: 2px;
+  font-size: 8pt;
+  color: #999;
+}
+div.viewer div.content div.tab-content div.group div.info input[type="text"].search-messages.active {
+  border: 1px solid #aaa;
+  color: #333;
+}
 div.viewer div.content div.tab-content div.group div.info.title {
   cursor: default;
   padding: 7px 6px;
   height: 14px;
+}
+div.viewer div.content div.tab-content div.group div.info.input {
+  padding: 4px 4px 3px 4px;
+  height: 22px;
 }
 div.viewer div.content div.tab-content div.group div.overhang {
   width: 391px;
@@ -286,66 +302,88 @@ div.viewer div.content div.tab-content.chat div.send textarea {
   width: 314px;
   resize: none;
 }
-div.viewer div.content div.tab-content.users div.group, div.viewer div.content div.tab-content.files div.group {
+div.viewer div.content div.tab-content.users div.group, div.viewer div.content div.tab-content.files div.group, div.viewer div.content div.tab-content.search div.group {
   height: 280px;
 }
-div.viewer div.content div.tab-content.users div.group div.list, div.viewer div.content div.tab-content.files div.group div.list {
+div.viewer div.content div.tab-content.users div.group div.list, div.viewer div.content div.tab-content.files div.group div.list, div.viewer div.content div.tab-content.search div.group div.list {
   height: 252px;
   overflow-y: auto;
   overflow-x: hidden;
 }
 div.viewer div.content div.tab-content.users div.group div.list div.user,
 div.viewer div.content div.tab-content.files div.group div.list div.user,
+div.viewer div.content div.tab-content.search div.group div.list div.user,
 div.viewer div.content div.tab-content.users div.group div.list div.file,
-div.viewer div.content div.tab-content.files div.group div.list div.file {
+div.viewer div.content div.tab-content.files div.group div.list div.file,
+div.viewer div.content div.tab-content.search div.group div.list div.file {
   padding: 10px 6px;
   border-bottom: 1px solid #f3f3f3;
   cursor: default;
 }
 div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes,
 div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes,
 div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes,
-div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes {
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes {
   float: left;
   width: 335px;
 }
 div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes span,
 div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes span,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes span,
 div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes span,
-div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span {
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes span {
   display: block;
 }
 div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes span.email,
 div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes span.email,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes span.email,
 div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes span.email,
 div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span.email,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes span.email,
 div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes span.uploaded-by,
 div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes span.uploaded-by,
 div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes span.uploaded-by,
-div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span.uploaded-by {
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes span.uploaded-by {
   color: #888;
 }
 div.viewer div.content div.tab-content.users div.group div.list div.user img,
 div.viewer div.content div.tab-content.files div.group div.list div.user img,
+div.viewer div.content div.tab-content.search div.group div.list div.user img,
 div.viewer div.content div.tab-content.users div.group div.list div.file img,
 div.viewer div.content div.tab-content.files div.group div.list div.file img,
+div.viewer div.content div.tab-content.search div.group div.list div.file img,
 div.viewer div.content div.tab-content.users div.group div.list div.user a.download,
 div.viewer div.content div.tab-content.files div.group div.list div.user a.download,
+div.viewer div.content div.tab-content.search div.group div.list div.user a.download,
 div.viewer div.content div.tab-content.users div.group div.list div.file a.download,
-div.viewer div.content div.tab-content.files div.group div.list div.file a.download {
+div.viewer div.content div.tab-content.files div.group div.list div.file a.download,
+div.viewer div.content div.tab-content.search div.group div.list div.file a.download {
   float: right;
 }
-div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar {
+div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.list::-webkit-scrollbar {
   height: 0.5ex;
   width: 8px;
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
 }
-div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar-thumb {
+div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.search div.group div.list::-webkit-scrollbar-thumb {
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
   border: 1px solid #ccc;
 }
-div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar-thumb:hover {
+div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.search div.group div.list::-webkit-scrollbar-thumb:hover {
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+div.viewer div.content div.tab-content.search div.loading {
+  height: 252px;
+  background: url(../images/loading.gif) no-repeat 50% 50%;
+}
+div.viewer div.content div.tab-content.search div.no-results {
+  padding-top: 115px;
+  text-align: center;
 }
 div.viewer div.content.join-room {
   text-align: center;

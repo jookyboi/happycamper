@@ -238,6 +238,8 @@ happycamper.rooms = function() {
         templateFiles(roomId);
         wireFileLinks();
 
+        wireSearch(roomId);
+
         gotoChatTab();
 
         // only do this on room open, not on refresh
@@ -594,6 +596,82 @@ happycamper.rooms = function() {
         });
     }
 
+    // search
+    function wireSearch(roomId) {
+        var $searchbox = $main.find("input.search-messages");
+
+        $searchbox.hintbox({
+            activeClass: "active",
+            filledClass: "active",
+            hintText: "Start typing to search messages by term"
+        }).delayedsearch({
+            call: function(value) {
+                searchTerm(roomId, value);
+            }
+        });
+    }
+
+    function searchTerm(roomId, value) {
+        value = $.trim(value);
+
+        if (value === "")
+            return;
+
+        preSearchTerm();
+
+        var executor = getExecutor();
+        executor.search(value, function(searchData) {
+            getResultsForRoom(roomId, searchData.messages);
+        });
+    }
+
+    function preSearchTerm() {
+        $main.find("div.no-results").hide();
+        $main.find("div.loading").show();
+    }
+
+    function getResultsForRoom(roomId, messages) {
+        var results = jLinq.from(messages)
+            .equals("room_id", roomId)
+            .select();
+
+        if (results.length === 0) {
+            showNoResults();
+            return;
+        }
+
+        $.each(results, function(index, message) {
+            // could get user from local, could get from server
+            message.user = getBackground().happycamper.background
+                .getUserForMessage(message, getRoomState(roomId));
+        });
+
+        console.log(results);
+
+        var checkUnnamedMessages = setInterval(function() {
+            var unnamedMessages = jLinq.from(results)
+                .equals("user", null)
+                .count();
+
+            // waiting for response to come back
+            if (unnamedMessages === 0) {
+                clearInterval(checkUnnamedMessages);
+                showSearchResults(results);
+            }
+
+            console.log("checking unnamed");
+        }, 100);
+    }
+
+    function showSearchResults(results) {
+        console.log(results);
+    }
+
+    function showNoResults() {
+        $main.find("div.loading").hide();
+        $main.find("div.no-results").show();
+    }
+
     // utilities
     function makeRoomButtonActive(roomId) {
         $roomsList.find("div.room[roomid='" + roomId + "']")
@@ -746,6 +824,7 @@ happycamper.rooms = function() {
             if (happycamper.state.openRoomId === roomId) {
                 // don't attempt to template for non-open room
                 templateMessages(roomId);
+                scrollToConversationBottom();
             }
         },
         refreshRoomUsers: function(roomId) {

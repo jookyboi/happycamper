@@ -225,12 +225,31 @@ div.viewer {
                     select.types-filter {
                         width: 80px;
                     }
+
+                    input[type="text"].search-messages {
+                        width: 377px;
+                        outline: 0;
+                        border: 1px solid #ddd;
+                        padding: 2px;
+                        font-size: 8pt;
+                        color: #999;
+                    }
+
+                    input[type="text"].search-messages.active {
+                        border: 1px solid #aaa;
+                        color: #333;
+                    }
                 }
 
                 div.info.title {
                     cursor: default;
                     padding: 7px 6px;
                     height: 14px;
+                }
+
+                div.info.input {
+                    padding: 4px 4px 3px 4px;
+                    height: 22px;
                 }
 
                 div.overhang {
@@ -356,7 +375,8 @@ div.viewer {
         }
 
         div.tab-content.users,
-        div.tab-content.files {
+        div.tab-content.files,
+        div.tab-content.search {
             div.group {
                 height: 280px;
 
@@ -403,6 +423,18 @@ div.viewer {
                 div.list::-webkit-scrollbar-thumb:hover {
                     .scrollbar-thumb-hover();
                 }
+            }
+        }
+
+        div.tab-content.search {
+            div.loading {
+                height: 252px;
+                background: url(../images/loading.gif) no-repeat 50% 50%;
+            }
+
+            div.no-results {
+                padding-top: 115px;
+                text-align: center;
             }
         }
     }
