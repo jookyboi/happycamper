@@ -26,7 +26,7 @@
             var $inputbox = $(this);
             var timer = null;
             
-            $inputbox.keydown(function(event) {
+            $inputbox.unbind("keydown").keydown(function() {
                 // stop the last keydown from kicking off
                 if (timer !== null) 
                     clearTimeout(timer);

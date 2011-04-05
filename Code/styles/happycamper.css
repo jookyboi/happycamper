@@ -209,26 +209,37 @@ div.viewer div.content div.tab-content div.group div.overhang {
   top: 28px;
   opacity: 0.3;
 }
-div.viewer div.content div.tab-content.chat div.group {
+div.viewer div.content div.tab-content.chat div.group, div.viewer div.content div.tab-content.search div.group {
   height: 228px;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation {
+div.viewer div.content div.tab-content.chat div.group div.conversation,
+div.viewer div.content div.tab-content.search div.group div.conversation,
+div.viewer div.content div.tab-content.chat div.group div.results,
+div.viewer div.content div.tab-content.search div.group div.results {
   float: left;
   padding: 5px;
   width: 382px;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 190px;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.activity {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity,
+div.viewer div.content div.tab-content.search div.group div.results div.activity {
   padding: 3px;
   border-bottom: 1px solid #f3f3f3;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.text {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.text,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity span.text,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity span.text,
+div.viewer div.content div.tab-content.search div.group div.results div.activity span.text {
   width: 300px;
   float: left;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.text pre {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.text pre,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity span.text pre,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity span.text pre,
+div.viewer div.content div.tab-content.search div.group div.results div.activity span.text pre {
   font-family: monospace;
   background-color: #f3f3f3;
   white-space: pre-wrap;
@@ -236,55 +247,108 @@ div.viewer div.content div.tab-content.chat div.group div.conversation div.activ
   border-bottom: 1px dotted #999;
   padding: 3px 0;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.time {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.time,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity span.time,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity span.time,
+div.viewer div.content div.tab-content.search div.group div.results div.activity span.time {
   float: right;
   color: #999;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.enter, div.viewer div.content div.tab-content.chat div.group div.conversation div.leave {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.enter,
+div.viewer div.content div.tab-content.search div.group div.conversation div.enter,
+div.viewer div.content div.tab-content.chat div.group div.results div.enter,
+div.viewer div.content div.tab-content.search div.group div.results div.enter,
+div.viewer div.content div.tab-content.chat div.group div.conversation div.leave,
+div.viewer div.content div.tab-content.search div.group div.conversation div.leave,
+div.viewer div.content div.tab-content.chat div.group div.results div.leave,
+div.viewer div.content div.tab-content.search div.group div.results div.leave {
   background: #D9E7FB;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.who {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.who,
+div.viewer div.content div.tab-content.search div.group div.conversation div.who,
+div.viewer div.content div.tab-content.chat div.group div.results div.who,
+div.viewer div.content div.tab-content.search div.group div.results div.who {
   background: #f3f3f3;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.timestamp {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.timestamp,
+div.viewer div.content div.tab-content.search div.group div.conversation div.timestamp,
+div.viewer div.content div.tab-content.chat div.group div.results div.timestamp,
+div.viewer div.content div.tab-content.search div.group div.results div.timestamp {
   color: #aaa;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.lock, div.viewer div.content div.tab-content.chat div.group div.conversation div.unlock {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.lock,
+div.viewer div.content div.tab-content.search div.group div.conversation div.lock,
+div.viewer div.content div.tab-content.chat div.group div.results div.lock,
+div.viewer div.content div.tab-content.search div.group div.results div.lock,
+div.viewer div.content div.tab-content.chat div.group div.conversation div.unlock,
+div.viewer div.content div.tab-content.search div.group div.conversation div.unlock,
+div.viewer div.content div.tab-content.chat div.group div.results div.unlock,
+div.viewer div.content div.tab-content.search div.group div.results div.unlock {
   background: #F6C1A9;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.upload {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.upload,
+div.viewer div.content div.tab-content.search div.group div.conversation div.upload,
+div.viewer div.content div.tab-content.chat div.group div.results div.upload,
+div.viewer div.content div.tab-content.search div.group div.results div.upload {
   background: url("../images/files.png") no-repeat 0 3px;
   padding-left: 18px;
   height: 15px;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.text span.star {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.text span.star,
+div.viewer div.content div.tab-content.search div.group div.conversation div.text span.star,
+div.viewer div.content div.tab-content.chat div.group div.results div.text span.star,
+div.viewer div.content div.tab-content.search div.group div.results div.text span.star {
   opacity: 0;
   display: inline-block;
   width: 14px;
   height: 14px;
   cursor: pointer;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.text:hover span.star {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.text:hover span.star,
+div.viewer div.content div.tab-content.search div.group div.conversation div.text:hover span.star,
+div.viewer div.content div.tab-content.chat div.group div.results div.text:hover span.star,
+div.viewer div.content div.tab-content.search div.group div.results div.text:hover span.star {
   opacity: 1.0;
   background: url("../images/star-inactive.png") no-repeat;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation div.text.starred span.star {
+div.viewer div.content div.tab-content.chat div.group div.conversation div.text.starred span.star,
+div.viewer div.content div.tab-content.search div.group div.conversation div.text.starred span.star,
+div.viewer div.content div.tab-content.chat div.group div.results div.text.starred span.star,
+div.viewer div.content div.tab-content.search div.group div.results div.text.starred span.star {
   opacity: 1.0;
   background: url("../images/star.png") no-repeat;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar {
+div.viewer div.content div.tab-content.chat div.group div.conversation, div.viewer div.content div.tab-content.search div.group div.conversation {
+  height: 190px;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.conversation::-webkit-scrollbar {
   height: 0.5ex;
   width: 8px;
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar-thumb {
+div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.search div.group div.conversation::-webkit-scrollbar-thumb {
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
   border: 1px solid #ccc;
 }
-div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar-thumb:hover {
+div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.search div.group div.conversation::-webkit-scrollbar-thumb:hover {
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
 }
-div.viewer div.content div.tab-content.chat div.send {
+div.viewer div.content div.tab-content.chat div.group div.results, div.viewer div.content div.tab-content.search div.group div.results {
+  height: 252px;
+}
+div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar {
+  height: 0.5ex;
+  width: 8px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
+}
+div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
+  border: 1px solid #ccc;
+}
+div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar-thumb:hover {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+div.viewer div.content div.tab-content.chat div.send, div.viewer div.content div.tab-content.search div.send {
   margin-top: 10px;
   padding: 5px;
   background: #fff;
@@ -293,7 +357,7 @@ div.viewer div.content div.tab-content.chat div.send {
   border-right: 1px solid #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
 }
-div.viewer div.content div.tab-content.chat div.send textarea {
+div.viewer div.content div.tab-content.chat div.send textarea, div.viewer div.content div.tab-content.search div.send textarea {
   overflow: hidden;
   border: 0;
   outline: 0;
@@ -379,7 +443,7 @@ div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollb
 }
 div.viewer div.content div.tab-content.search div.loading {
   height: 252px;
-  background: url(../images/loading.gif) no-repeat 50% 50%;
+  background: url(../images/loading.gif) no-repeat 50% 49%;
 }
 div.viewer div.content div.tab-content.search div.no-results {
   padding-top: 115px;

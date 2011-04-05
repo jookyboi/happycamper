@@ -61,6 +61,8 @@ happycamper.background = function() {
 
     this.getUserForMessage = getUserForMessage;
 
+    this.getFileForMessages = getFileForMessages;
+
     this.executor = function() {
         return executor;  
     };

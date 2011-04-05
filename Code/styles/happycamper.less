@@ -263,17 +263,18 @@ div.viewer {
             }
         }
 
-        div.tab-content.chat {
+        div.tab-content.chat,
+        div.tab-content.search {
             div.group {
                 height: 228px;
 
-                div.conversation {
+                div.conversation,
+                div.results {
                     float: left;
                     padding: 5px;
                     width: 382px;
                     overflow-y: auto;
                     overflow-x: hidden;
-                    height: 190px;
 
                     div.activity {
                         padding: 3px;
@@ -340,6 +341,10 @@ div.viewer {
                     }
                 }
 
+                div.conversation {
+                    height: 190px;
+                }
+
                 div.conversation::-webkit-scrollbar {
                     .scrollbar();
                 }
@@ -349,6 +354,22 @@ div.viewer {
                 }
 
                 div.conversation::-webkit-scrollbar-thumb:hover {
+                    .scrollbar-thumb-hover();
+                }
+
+                div.results {
+                    height: 252px;
+                }
+
+                div.results::-webkit-scrollbar {
+                    .scrollbar();
+                }
+
+                div.results::-webkit-scrollbar-thumb {
+                    .scrollbar-thumb();
+                }
+
+                div.results::-webkit-scrollbar-thumb:hover {
                     .scrollbar-thumb-hover();
                 }
             }
@@ -429,7 +450,7 @@ div.viewer {
         div.tab-content.search {
             div.loading {
                 height: 252px;
-                background: url(../images/loading.gif) no-repeat 50% 50%;
+                background: url(../images/loading.gif) no-repeat 50% 49%;
             }
 
             div.no-results {

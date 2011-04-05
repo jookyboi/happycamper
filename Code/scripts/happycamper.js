@@ -19,6 +19,7 @@ happycamper.rooms = function() {
 
     // constants
     var ROOM_HEIGHT = 29;
+    var HINTBOX_MESSAGE = "Start typing to search messages";
 
     // used to prevent roomList from refreshing when joining room
     var roomListRefreshEnabled = true;
@@ -77,6 +78,11 @@ happycamper.rooms = function() {
 
             if ($(this).hasClass("chat"))
                 scrollToConversationBottom();
+
+            if ($(this).hasClass("search")) {
+                wireSearch(happycamper.state.openRoomId);
+                clearResults();
+            }
 
             return false;
         });
@@ -297,13 +303,13 @@ happycamper.rooms = function() {
             } else if (message.type === TYPES.TIMESTAMP) {
                 $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.TEXT) {
-                insertWhoMessage(messages, message, index);
+                insertWhoMessage(messages, message, index, $conversationBox);
                 $("#text-message-template").tmpl(replaceURLWithHTMLLinks(message)).appendTo($conversationBox);
             } else if (message.type === TYPES.UPLOAD) {
-                insertWhoMessage(messages, message, index);
+                insertWhoMessage(messages, message, index, $conversationBox);
                 $("#upload-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.PASTE) {
-                insertWhoMessage(messages, message, index);
+                insertWhoMessage(messages, message, index, $conversationBox);
                 $("#paste-message-template").tmpl(message).appendTo($conversationBox);
             } else if (message.type === TYPES.LOCK) {
                 $("#lock-message-template").tmpl(message).appendTo($conversationBox);
@@ -342,12 +348,10 @@ happycamper.rooms = function() {
         });
     }
 
-    function insertWhoMessage(messages, message, index) {
-        var $conversationBox = $main.find("div.conversation");
-
+    function insertWhoMessage(messages, message, index, $box) {
         // add who message if text/paste is the firt of the block
         if (index === 0) {
-            $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
+            $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($box);
         } else {
             var lastMessage = messages[index - 1];
             var TYPES = happycamper.util.MESSAGE_TYPES;
@@ -356,7 +360,7 @@ happycamper.rooms = function() {
                  lastMessage.type !== TYPES.PASTE &&
                  lastMessage.type !== TYPES.UPLOAD) ||
                 (lastMessage.user_id !== message.user_id)) {
-                $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($conversationBox);
+                $("#who-message-template").tmpl(whoMessage(message.user)).appendTo($box);
             }
         }
     }
@@ -603,7 +607,7 @@ happycamper.rooms = function() {
         $searchbox.hintbox({
             activeClass: "active",
             filledClass: "active",
-            hintText: "Start typing to search messages by term"
+            hintText: HINTBOX_MESSAGE
         }).delayedsearch({
             call: function(value) {
                 searchTerm(roomId, value);
@@ -614,20 +618,37 @@ happycamper.rooms = function() {
     function searchTerm(roomId, value) {
         value = $.trim(value);
 
-        if (value === "")
+        if (value === "") {
+            clearResults();
             return;
+        }
 
         preSearchTerm();
 
         var executor = getExecutor();
         executor.search(value, function(searchData) {
-            getResultsForRoom(roomId, searchData.messages);
+            getResultsForRoom(roomId, getResultsWithTimestamp(searchData.messages));
         });
+    }
+
+    function clearResults() {
+        $main.find("div.tab-content.search div.results").html("").hide();
+        $main.find("div.no-results").hide();
+        $main.find("div.loading").hide();
     }
 
     function preSearchTerm() {
         $main.find("div.no-results").hide();
+        $main.find("div.tab-content.search div.results").hide();
         $main.find("div.loading").show();
+    }
+
+    function getResultsWithTimestamp(messages) {
+        return jLinq.from(messages)
+            .select(function(message) {
+                message.timestamp = dateFormat(message.created_at, "mmmm d");
+                return message;
+            });
     }
 
     function getResultsForRoom(roomId, messages) {
@@ -640,31 +661,72 @@ happycamper.rooms = function() {
             return;
         }
 
+        var TYPES = happycamper.util.MESSAGE_TYPES;
+        var background = getBackground().happycamper.background;
+
+        background.getFileForMessages(roomId, results);
+        
         $.each(results, function(index, message) {
             // could get user from local, could get from server
-            message.user = getBackground().happycamper.background
-                .getUserForMessage(message, getRoomState(roomId));
+            message.user = background.getUserForMessage(message, getRoomState(roomId));
         });
 
-        console.log(results);
-
-        var checkUnnamedMessages = setInterval(function() {
+        var checkUnfinished = setInterval(function() {
             var unnamedMessages = jLinq.from(results)
                 .equals("user", null)
                 .count();
 
+            var noUploadMessages = jLinq.from(results)
+                .where(function(result) {
+                    return (result.type === TYPES.UPLOAD &&
+                            result.upload === undefined);
+                }).count();
+
             // waiting for response to come back
-            if (unnamedMessages === 0) {
-                clearInterval(checkUnnamedMessages);
+            if (unnamedMessages === 0 && noUploadMessages === 0) {
+                clearInterval(checkUnfinished);
                 showSearchResults(results);
             }
-
-            console.log("checking unnamed");
         }, 100);
     }
 
     function showSearchResults(results) {
-        console.log(results);
+        $main.find("div.loading").hide();
+        $main.find("div.no-results").hide();
+
+        // reverse chronological order
+        results.reverse();
+
+        var TYPES = happycamper.util.MESSAGE_TYPES;
+
+        $resultsBox = $main.find("div.tab-content.search div.results");
+        $resultsBox.html("").show();
+
+        $.each(results, function(index, message) {
+            if (message.type === TYPES.TEXT) {
+                insertWhoMessage(results, message, index, $resultsBox);
+                $("#text-message-template").tmpl(replaceURLWithHTMLLinks(message)).appendTo($resultsBox);
+            } else if (message.type === TYPES.UPLOAD) {
+                insertWhoMessage(results, message, index, $resultsBox);
+                $("#upload-message-template").tmpl(message).appendTo($resultsBox);
+            } else if (message.type === TYPES.PASTE) {
+                insertWhoMessage(results, message, index, $resultsBox);
+                $("#paste-message-template").tmpl(message).appendTo($resultsBox);
+            }
+        });
+
+        wireResultLinks();
+    }
+    
+    function wireResultLinks() {
+        $resultsBox = $main.find("div.tab-content.search div.results");
+        $resultsBox.find("div.activity a").unbind("click").click(function() {
+            chrome.tabs.create({
+                url: $(this).attr("href")
+            });
+
+            return false;
+        });
     }
 
     function showNoResults() {

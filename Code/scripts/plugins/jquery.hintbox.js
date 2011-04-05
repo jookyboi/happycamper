@@ -24,10 +24,12 @@
             settings = $.extend(settings, options);
             
             var $inputbox = $(this);
-            $inputbox.val(settings.hintText);
-            
+            $inputbox.val(settings.hintText)
+                .removeClass(settings.filledClass)
+                .removeClass(settings.activeClass);
+
             // attach events
-            $inputbox.focusin(function() {
+            $inputbox.unbind("focusin").focusin(function() {
                 $(this).removeClass(settings.filledClass);
                 $(this).addClass(settings.activeClass);
                 
@@ -36,7 +38,7 @@
                 }
             });
             
-            $inputbox.focusout(function() {
+            $inputbox.unbind("focusout").focusout(function() {
                 $(this).removeClass(settings.activeClass);
                 
                 if ($.trim($(this).val()) === "") {
