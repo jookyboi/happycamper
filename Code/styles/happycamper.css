@@ -334,7 +334,7 @@ div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
 }
 div.viewer div.content div.tab-content.chat div.group div.results, div.viewer div.content div.tab-content.search div.group div.results {
-  height: 252px;
+  height: 241px;
 }
 div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar {
   height: 0.5ex;
