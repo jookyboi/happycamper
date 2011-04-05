@@ -37,6 +37,9 @@ happycamper.background = function() {
     // used for removing spinner once room has loaded
     var roomCallback = null;
 
+    // used to deal with periodic full refreshes
+    var refreshCount = 0;
+
     // public
     this.initialize = function() {
         initSettings();
@@ -92,6 +95,8 @@ happycamper.background = function() {
         var newState = $.extend(true, {}, happycamper.state);
         setVisibleActiveRooms(newState);
         setActiveRoomStates();
+
+        refreshCount++;
     }
 
     function setVisibleActiveRooms(newState) {
@@ -271,7 +276,7 @@ happycamper.background = function() {
         var arguments = {};
         var fullRefresh = true;
 
-        if (roomState.messages.length > 0) {
+        if (roomState.messages.length > 0 && !performFullRefresh()) {
             // don't need full refresh
             fullRefresh = false;
 
@@ -433,6 +438,10 @@ happycamper.background = function() {
     }
 
     // utilities
+    function performFullRefresh() {
+        return refreshCount % 30 === 0;
+    }
+
     function callPopupFunction(callback) {
         var popup = chrome.extension.getViews({type: "popup"});
 
