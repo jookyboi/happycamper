@@ -98,6 +98,11 @@ div.viewer div.content {
   width: 415px;
   margin: 50px 0 0 20px;
 }
+div.viewer div.content ul.tabs {
+  display: inline-block;
+  width: 300px;
+  float: left;
+}
 div.viewer div.content ul.tabs li {
   list-style: none;
   display: inline-block;
@@ -132,6 +137,13 @@ div.viewer div.content ul.tabs li.selected:hover {
   border-left: 1px solid #e9e9e9;
   border-right: 1px solid #ddd;
   border-top: 1px solid #e9e9e9;
+}
+div.viewer div.content a.leave-room {
+  padding: 6px 19px 5px 10px;
+  float: right;
+  color: #333;
+  text-decoration: none;
+  background: url("../images/leave.png") no-repeat 46px;
 }
 div.viewer div.content div.tab-content {
   background: #f1f1f1;

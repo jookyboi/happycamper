@@ -254,8 +254,6 @@ happycamper.rooms = function() {
         templateFiles(roomId);
         wireFileLinks();
 
-        wireSearch(roomId);
-
         gotoChatTab();
 
         // only do this on room open, not on refresh
