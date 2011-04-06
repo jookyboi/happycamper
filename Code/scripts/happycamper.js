@@ -261,10 +261,10 @@ happycamper.rooms = function() {
 
             // only do this on room open, not on refresh
             scrollToConversationBottom();
-        } catch(error) {
-            console.log(error);
-            handleError();
+        } catch (error) {
+            // allow execution to continue
         }
+
     }
 
     function joinRoom(roomId) {
@@ -308,7 +308,7 @@ happycamper.rooms = function() {
         $joining.fadeIn();
 
         executor.rooms.leave(roomId, function() {
-             background.happycamper.background.refreshWithCallback(function() {
+             getBackground().happycamper.background.refreshWithCallback(function() {
                 $joining.fadeOut();
                 makeRoomButtonInactive(roomId);
                 openDefaultRoom();
@@ -923,13 +923,6 @@ happycamper.rooms = function() {
         
         for (index in map) unique.push(map[index]);
         return unique;
-    }
-
-    // error handling
-    function handleError() {
-        // force full refresh to account for any data errors
-        happycamper.util.removeItem("state");
-        getBackground().happycamper.background.fullRefresh();
     }
 
     // public
