@@ -12,6 +12,9 @@ happycamper.util = function() {
 
             return JSON.parse(value);
         },
+        removeItem: function(key) {
+            localStorage.removeItem(key);
+        },
         MESSAGE_TYPES: {
             ENTER: "EnterMessage",
             LEAVE: "LeaveMessage",

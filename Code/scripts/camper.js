@@ -74,6 +74,10 @@ var Camper = Camper || {};
             execute(routes.rooms.join(roomId), "POST", {}, callback);
         };
 
+        this.rooms.leave = function(roomId, callback) {
+            execute(routes.rooms.leave(roomId), "POST", {}, callback);
+        };
+
         this.rooms.speak = function(roomId, arguments, callback) {
             execute(routes.rooms.speak(roomId), "POST", arguments, callback);
         };
@@ -103,9 +107,6 @@ var Camper = Camper || {};
                 success: function(data) {
                     successCalled = true;
                     callback(data);
-                },
-                error: function(data) {
-                    // todo: error function
                 },
                 complete: function(jqXHR, textStatus) {
                     // success doesn't get called with an empty response

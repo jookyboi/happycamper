@@ -52,12 +52,17 @@ happycamper.background = function() {
         }, (happycamper.settings.refreshInterval * 1000));
     };
 
+    this.fullRefresh = function() {
+        initSettings();
+        refreshLoop();
+    };
+
     this.refreshRoom = function(roomId) {
         var room = getActiveRoom(roomId);
         getUsersAndMessagesForRoom(room);
     };
 
-    this.refreshWithCallback = function(roomId, callback) {
+    this.refreshWithCallback = function(callback) {
         refreshLoop();
         roomCallback = callback;
     };
@@ -67,7 +72,7 @@ happycamper.background = function() {
     this.getFileForMessages = getFileForMessages;
 
     this.executor = function() {
-        return executor;  
+        return executor;
     };
 
     // initialize

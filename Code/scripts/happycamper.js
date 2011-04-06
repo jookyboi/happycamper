@@ -236,28 +236,35 @@ happycamper.rooms = function() {
     }
 
     function openRoom(roomId) {
-        $joining.fadeOut();
-        $main.show();
+        try {
+            $joining.fadeOut();
+            $main.show();
 
-        loadState();
-        happycamper.state.openRoomId = roomId;
-        saveState();
+            loadState();
+            happycamper.state.openRoomId = roomId;
+            saveState();
 
-        makeRoomButtonSelected(roomId);
-        templateMessages(roomId);
-        wireSendTextMessage();
+            wireLeaveRoom();
 
-        templateFilters();
-        wireFilters();
+            makeRoomButtonSelected(roomId);
+            templateMessages(roomId);
+            wireSendTextMessage();
 
-        templateUsers(roomId);
-        templateFiles(roomId);
-        wireFileLinks();
+            templateFilters();
+            wireFilters();
 
-        gotoChatTab();
+            templateUsers(roomId);
+            templateFiles();
+            wireFileLinks();
 
-        // only do this on room open, not on refresh
-        scrollToConversationBottom();
+            gotoChatTab();
+
+            // only do this on room open, not on refresh
+            scrollToConversationBottom();
+        } catch(error) {
+            console.log(error);
+            handleError();
+        }
     }
 
     function joinRoom(roomId) {
@@ -269,7 +276,7 @@ happycamper.rooms = function() {
         roomListRefreshEnabled = false;
 
         executor.rooms.join(roomId, function() {
-            background.happycamper.background.refreshWithCallback(roomId, function() {
+            background.happycamper.background.refreshWithCallback(function() {
                 makeRoomButtonActive(roomId);
                 openRoom(roomId);
                 roomListRefreshEnabled = true;
@@ -278,11 +285,35 @@ happycamper.rooms = function() {
     }
 
     function showOpenRoomMessage() {
+        $main.hide();
+        $joining.hide();
         $joinRoom.show();
     }
 
     function gotoChatTab() {
         $main.find("ul.tabs li.chat").trigger("click");
+    }
+
+    // leave room
+    function wireLeaveRoom() {
+        var roomId = happycamper.state.openRoomId;
+
+        $main.find("a.leave-room").unbind("click").click(function() {
+            leaveRoom(roomId);
+        });
+    }
+
+    function leaveRoom(roomId) {
+        var executor = getBackground().happycamper.background.executor();
+        $joining.fadeIn();
+
+        executor.rooms.leave(roomId, function() {
+             background.happycamper.background.refreshWithCallback(function() {
+                $joining.fadeOut();
+                makeRoomButtonInactive(roomId);
+                openDefaultRoom();
+            });
+        });
     }
 
     // messages
@@ -405,7 +436,6 @@ happycamper.rooms = function() {
         var message = $.trim($sendBox.val());
         if (message !== "") {
             var executor = getExecutor();
-            var background = getBackground();
             var openRoomId = happycamper.state.openRoomId;
 
             // we're deliberate omitting the message type
@@ -417,7 +447,7 @@ happycamper.rooms = function() {
                 }
             }, function() {
                // upon callback, refresh the data. background will auto-refresh the chat
-                background.happycamper.background.refreshRoom(openRoomId);
+                getBackground().happycamper.background.refreshRoom(openRoomId);
             });
 
             $sendBox.val("").focus();
@@ -584,8 +614,8 @@ happycamper.rooms = function() {
     }
 
     // files
-    function templateFiles(roomId) {
-        var roomState = getRoomState(roomId);
+    function templateFiles() {
+        var roomState = getRoomState(happycamper.state.openRoomId);
 
         if (roomState === undefined)
             return;
@@ -756,6 +786,13 @@ happycamper.rooms = function() {
         $roomsList.find("div.room[roomid='" + roomId + "']").addClass("selected");
     }
 
+    function makeRoomButtonInactive(roomId) {
+        $roomsList.find("div.room[roomid='" + roomId + "']")
+                  .removeClass("active")
+                  .removeClass("locked")
+                  .addClass("inactive");
+    }
+
     function scrollboxMarginTop() {
         return parseInt($scrollbox.css("marginTop").replace("px"));
     }
@@ -886,6 +923,13 @@ happycamper.rooms = function() {
         
         for (index in map) unique.push(map[index]);
         return unique;
+    }
+
+    // error handling
+    function handleError() {
+        // force full refresh to account for any data errors
+        happycamper.util.removeItem("state");
+        getBackground().happycamper.background.fullRefresh();
     }
 
     // public
