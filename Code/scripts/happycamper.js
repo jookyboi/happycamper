@@ -260,7 +260,9 @@ happycamper.rooms = function() {
         try {
             $joining.fadeOut();
             $main.show();
+
             removeNotifyIconFromRoomButton(roomId);
+            removeFromNotifiedRooms(roomId);
 
             loadState();
             happycamper.state.openRoomId = roomId;
@@ -830,6 +832,19 @@ happycamper.rooms = function() {
     function removeNotifyIconFromRoomButton(roomId) {
         $roomsList.find("div.room[roomid='" + roomId + "']")
                   .removeClass("new-messages");
+    }
+
+    function removeFromNotifiedRooms(roomId) {
+        var notifiedRooms = happycamper.util.loadJson("notifiedRooms");
+        if (notifiedRooms === undefined)
+            return;
+
+        notifiedRooms.roomIds = jLinq.from(notifiedRooms.roomIds)
+            .where(function(thisRoomId) {
+                return thisRoomId !== roomId;
+            }).select();
+
+        happycamper.util.saveJson("notifiedRooms", notifiedRooms);
     }
 
     function scrollboxMarginTop() {

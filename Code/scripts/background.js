@@ -299,7 +299,7 @@ happycamper.background = function() {
         var arguments = {};
         var fullRefresh = true;
 
-        if (roomState.messages.length > 0 && !performFullRefresh()) {
+        if (roomState.messages.length > 0) {
             // don't need full refresh
             fullRefresh = false;
 
@@ -488,6 +488,7 @@ happycamper.background = function() {
     }
 
     function setRoomNotifyIcon(roomId) {
+        happycamper.notifiedRooms = happycamper.util.loadJson("notifiedRooms");
         happycamper.notifiedRooms.roomIds.push(roomId);
         happycamper.util.saveJson("notifiedRooms", happycamper.notifiedRooms);
     }
@@ -499,10 +500,6 @@ happycamper.background = function() {
     }
 
     // utilities
-    function performFullRefresh() {
-        return refreshCount % 30 === 0;
-    }
-
     function callPopupFunction(callback) {
         var popup = chrome.extension.getViews({type: "popup"});
 
