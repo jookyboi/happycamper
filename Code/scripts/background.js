@@ -1,10 +1,15 @@
 var happycamper = {};
 
 happycamper.settings = {
+    me: {
+        id: 855525,
+        name: "Rui Jiang",
+        email_address: "rjiang.bb@gmail.com"
+    },
     refreshInterval: 10,
     notifications: {
         enabled: true,
-        showFor: -1
+        showFor: 5
     },
     chat: {
         showTimestamps: true,
@@ -18,6 +23,10 @@ happycamper.state = {
     openRoomId: -1,
     activeRoomStates: [],
     allUsers: []
+};
+
+happycamper.notifiedRooms = {
+    roomIds: []
 };
 
 happycamper.background = function() {
@@ -42,7 +51,7 @@ happycamper.background = function() {
 
     // public
     this.initialize = function() {
-        initSettings();
+        initializeStateAndSettings();
 
         // call once manually
         refreshLoop();
@@ -53,7 +62,7 @@ happycamper.background = function() {
     };
 
     this.fullRefresh = function() {
-        initSettings();
+        initializeStateAndSettings();
         refreshLoop();
     };
 
@@ -76,9 +85,10 @@ happycamper.background = function() {
     };
 
     // initialize
-    function initSettings() {
+    function initializeStateAndSettings() {
         var settings = happycamper.util.loadJson("settings");
         var state = happycamper.util.loadJson("state");
+        var notifiedRooms = happycamper.util.loadJson("notifiedRooms");
 
         if (settings === null) {
             happycamper.util.saveJson("settings", happycamper.settings);
@@ -90,6 +100,12 @@ happycamper.background = function() {
             saveState();
         } else {
             happycamper.state = state;
+        }
+
+        if (notifiedRooms === null) {
+            happycamper.util.saveJson("notifiedRooms", happycamper.notifiedRooms);
+        } else {
+            happycamper.notifiedRooms = notifiedRooms;
         }
     }
 
@@ -186,9 +202,11 @@ happycamper.background = function() {
         var uploads = roomState.recentUploads;
 
         if (missingInfo(messages, uploads)) {
+            var tryCount = 0;
+
             // not all users and files have been set
             var checkUnnamedInterval = setInterval(function() {
-                if (!missingInfo(messages, uploads)) {
+                if (!missingInfo(messages, uploads) || ++tryCount === 5) {
                     saveStateAndRefresh(room, callRefresh);
                     clearInterval(checkUnnamedInterval);
                 }
@@ -306,7 +324,7 @@ happycamper.background = function() {
                 roomState.messages = roomState.messages.concat(messages);
 
                 if (messages.length > 0) {
-                    showMessageNotifications(messages);
+                    showMessageNotifications(messages, room);
                     saveStateOnLoadComplete(room, true);
                 }
             }
@@ -438,8 +456,46 @@ happycamper.background = function() {
     }
 
     // notifications
-    function showMessageNotifications(newMessages) {
-        
+    function showMessageNotifications(newMessages, room) {
+        var settings = happycamper.settings;
+
+        if (!settings.notifications.enabled)
+            return;
+
+        $.each(newMessages, function(index, message) {
+             //if (message.user_id === happycamper.settings.me.id)
+             //    return true; // skip if it is user himself
+
+            if (!messageHasBody(message) || isPopupOpen())
+                return true;
+
+            var notification = webkitNotifications.createNotification(
+                "../images/icon48.png",
+                message.user.name + " - " + room.name,
+                message.body
+            );
+
+            notification.show();
+            setRoomNotifyIcon(room.id);
+            setActionNotifyIcon();
+
+            if (settings.notifications.showFor > 0) {
+                setTimeout(function() {
+                    notification.cancel();
+                }, settings.notifications.showFor * 1000);
+            }
+        });
+    }
+
+    function setRoomNotifyIcon(roomId) {
+        happycamper.notifiedRooms.roomIds.push(roomId);
+        happycamper.util.saveJson("notifiedRooms", happycamper.notifiedRooms);
+    }
+
+    function setActionNotifyIcon() {
+        chrome.browserAction.setIcon({
+            path: "../images/action-icon-notify.png"
+        })
     }
 
     // utilities
@@ -453,6 +509,10 @@ happycamper.background = function() {
         if (popup.length > 0) {
             callback(popup[0]);
         }
+    }
+
+    function isPopupOpen() {
+        return chrome.extension.getViews({type: "popup"}).length > 0;
     }
 
     function getActiveRoom(roomId) {
@@ -484,6 +544,14 @@ happycamper.background = function() {
         if (getUser(user.id) === undefined) {
             happycamper.state.allUsers.push(user);
         }
+    }
+
+    function messageHasBody(message) {
+        var TYPES = happycamper.util.MESSAGE_TYPES;
+
+        return (message.type === TYPES.TEXT ||
+                message.type === TYPES.PASTE ||
+                message.type === TYPES.UPLOAD);
     }
 
     function loadState() {

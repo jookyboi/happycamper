@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Read from, write to, and get notifications on activity in Campfire rooms.",
 	"browser_action": {
-		"default_icon": "images/icon48.png",
+		"default_icon": "images/action-icon.png",
 		"default_title": "Show Happy Camper",
         "popup": "happycamper.html"
 	},

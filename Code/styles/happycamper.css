@@ -69,6 +69,16 @@ div.viewer div.rooms div.room {
   cursor: pointer;
   margin-bottom: 2px;
 }
+div.viewer div.rooms div.room div.notify {
+  float: right;
+  padding-right: 2px;
+  font-weight: bold;
+  color: #f67900;
+  display: none;
+}
+div.viewer div.rooms div.room.new-messages div.notify {
+  display: block;
+}
 div.viewer div.rooms div.room.active {
   background: #f1f1f1 url("../images/active.png") no-repeat 6px 8px;
 }

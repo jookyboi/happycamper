@@ -45,6 +45,27 @@ happycamper.rooms = function() {
         templateRooms();
         wireUpDownButtons();
         wireMouseWheel();
+
+        clearActionNotifyIcon();
+        addNotifyIconsToRooms();
+    }
+
+    // new messages notifications
+    function clearActionNotifyIcon() {
+        chrome.browserAction.setIcon({
+            path: "../images/action-icon.png"
+        })
+    }
+
+    function addNotifyIconsToRooms() {
+        var notifiedRooms = happycamper.util.loadJson("notifiedRooms");
+
+        if (notifiedRooms === undefined)
+            return;
+
+        $.each(notifiedRooms.roomIds, function(index, roomId) {
+            addNotifyIconToRoomButton(roomId);
+        });
     }
 
     // templating
@@ -239,6 +260,7 @@ happycamper.rooms = function() {
         try {
             $joining.fadeOut();
             $main.show();
+            removeNotifyIconFromRoomButton(roomId);
 
             loadState();
             happycamper.state.openRoomId = roomId;
@@ -272,11 +294,10 @@ happycamper.rooms = function() {
         $joining.fadeIn();
 
         var executor = getExecutor();
-        var background = getBackground();
         roomListRefreshEnabled = false;
 
         executor.rooms.join(roomId, function() {
-            background.happycamper.background.refreshWithCallback(function() {
+            getBackground().happycamper.background.refreshWithCallback(function() {
                 makeRoomButtonActive(roomId);
                 openRoom(roomId);
                 roomListRefreshEnabled = true;
@@ -710,6 +731,8 @@ happycamper.rooms = function() {
             message.user = background.getUserForMessage(message, getRoomState(roomId));
         });
 
+        var tryCount = 0;
+
         var checkUnfinished = setInterval(function() {
             var unnamedMessages = jLinq.from(results)
                 .equals("user", null)
@@ -721,12 +744,18 @@ happycamper.rooms = function() {
                             result.upload === undefined);
                 }).count();
 
+            if (++tryCount === 15) {
+                // give up
+                showNoResults();
+                clearInterval(checkUnfinished);
+            }
+
             // waiting for response to come back
             if (unnamedMessages === 0 && noUploadMessages === 0) {
                 clearInterval(checkUnfinished);
                 showSearchResults(results);
             }
-        }, 100);
+        }, 200);
     }
 
     function showSearchResults(results) {
@@ -791,6 +820,16 @@ happycamper.rooms = function() {
                   .removeClass("active")
                   .removeClass("locked")
                   .addClass("inactive");
+    }
+
+    function addNotifyIconToRoomButton(roomId) {
+        $roomsList.find("div.room[roomid='" + roomId + "']")
+                  .addClass("new-messages");
+    }
+
+    function removeNotifyIconFromRoomButton(roomId) {
+        $roomsList.find("div.room[roomid='" + roomId + "']")
+                  .removeClass("new-messages");
     }
 
     function scrollboxMarginTop() {
@@ -984,6 +1023,4 @@ $(function() {
     happycamper.state = happycamper.util.loadJson("state");
     happycamper.settings = happycamper.util.loadJson("settings");
     happycamper.rooms.initialize();
-    
-    // todo: handle getting kicked out of deleted room
 });
