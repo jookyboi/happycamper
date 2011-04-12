@@ -25,16 +25,16 @@ div.viewer div.rooms div.header {
   padding: 10px 0;
   height: 30px;
 }
-div.viewer div.rooms div.settings, div.viewer div.rooms div.room {
+div.viewer div.rooms div.options, div.viewer div.rooms div.room {
   padding: 5px 5px 5px 21px;
 }
-div.viewer div.rooms div.settings {
+div.viewer div.rooms div.options {
   border: 1px solid #eae59d;
   background: #fcf8bb url("../images/settings.png") no-repeat 6px 7px;
   color: #726c24;
   cursor: pointer;
 }
-div.viewer div.rooms div.settings:hover {
+div.viewer div.rooms div.options:hover {
   background-color: #f9f5b1;
 }
 div.viewer div.rooms div.scroll-up, div.viewer div.rooms div.scroll-down {
@@ -499,6 +499,103 @@ div.blank-slate span {
 }
 div.blank-slate img {
   margin-bottom: 20px;
+}
+div.options-editor {
+  margin: 30px auto 0 auto;
+  width: 410px;
+}
+div.options-editor div.container {
+  margin-top: 40px;
+}
+div.options-editor div.container ul.menu {
+  list-style: none;
+  float: left;
+}
+div.options-editor div.container ul.menu li {
+  display: inline-block;
+}
+div.options-editor div.container ul.menu li a {
+  display: inline-block;
+  padding: 10px 12px 10px 27px;
+  color: #333;
+  text-decoration: none;
+}
+div.options-editor div.container ul.menu li a:hover {
+  background-color: #f3f3f3 !important;
+}
+div.options-editor div.container ul.menu li.selected a {
+  background-color: #eee !important;
+}
+div.options-editor div.container ul.menu li.account a {
+  background: url("../images/account.png") no-repeat 9px 10px;
+}
+div.options-editor div.container ul.menu li.chat a {
+  background: url("../images/chat.png") no-repeat 10px 10px;
+}
+div.options-editor div.container ul.menu li.notifications a {
+  background: url("../images/notifications.png") no-repeat 9px 10px;
+}
+div.options-editor div.container button.save-options {
+  float: right;
+}
+div.options-editor div.content {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 3px solid #ddd;
+  font-size: 12pt;
+}
+div.options-editor div.content fieldset {
+  margin-bottom: 40px;
+}
+div.options-editor div.content div.label {
+  display: block;
+  font-weight: bold;
+  color: #999;
+  border-bottom: 1px dotted #ccc;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+div.options-editor div.content div.label label {
+  float: left;
+}
+div.options-editor div.content div.label div.what {
+  display: block;
+  float: right;
+  color: #999;
+}
+div.options-editor div.content div.label div.what a {
+  display: inline-block;
+  margin: 0 3px;
+  font-size: 9pt;
+  text-decoration: none;
+  color: #999;
+  cursor: help;
+}
+div.options-editor div.content input[type="text"] {
+  display: inline-block;
+  border: none;
+  background: #fcf8bb;
+  padding: 5px;
+  outline: none;
+}
+div.options-editor div.content input[type="text"].account-name {
+  margin: 0 2px;
+}
+div.options-editor div.content input[type="text"].api-token {
+  width: 400px;
+}
+div.options-editor div.footer {
+  padding-top: 10px;
+  border-top: 3px solid #ddd;
+  font-size: 8pt;
+}
+div.options-editor div.footer div.created {
+  float: left;
+  padding-left: 20px;
+  background: url("../images/roowii.png") no-repeat 0 1px;
+}
+div.options-editor div.footer a {
+  color: #999;
 }
 div.clear {
   clear: both;

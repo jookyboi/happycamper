@@ -35,18 +35,18 @@ div.viewer {
             height: 30px;
         }
 
-        div.settings, div.room {
+        div.options, div.room {
             padding: 5px 5px 5px 21px;
         }
 
-        div.settings {
+        div.options {
             border: 1px solid #eae59d;
             background: #fcf8bb url("../images/settings.png") no-repeat 6px 7px;
             color: #726c24;
             cursor: pointer;
         }
 
-        div.settings:hover {
+        div.options:hover {
             background-color: #f9f5b1;
         }
 
@@ -519,6 +519,126 @@ div.blank-slate {
 
     img {
         margin-bottom: 20px;
+    }
+}
+
+div.options-editor {
+    margin: 30px auto 0 auto;
+    width: 410px;
+
+    div.container {
+        margin-top: 40px;
+
+        ul.menu {
+            list-style: none;
+            float: left;
+
+            li {
+                display: inline-block;
+
+                a {
+                    display: inline-block;
+                    padding: 10px 12px 10px 27px;
+                    color: #333;
+                    text-decoration: none;
+                }
+
+                a:hover {
+                    background-color: #f3f3f3 !important;
+                }
+            }
+
+            li.selected a {
+                background-color: #eee !important;
+            }
+
+            li.account a {
+                background: url("../images/account.png") no-repeat 9px 10px;
+            }
+
+            li.chat a {
+                background: url("../images/chat.png") no-repeat 10px 10px;
+            }
+
+            li.notifications a {
+                background: url("../images/notifications.png") no-repeat 9px 10px;
+            }
+        }
+
+        button.save-options {
+            float: right;
+        }
+    }
+
+    div.content {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 3px solid #ddd;
+        font-size: 12pt;
+
+        fieldset {
+            margin-bottom: 40px;
+        }
+
+        div.label {
+            display: block;
+            font-weight: bold;
+            color: #999;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+
+            label {
+                float: left;
+            }
+
+            div.what {
+                display: block;
+                float: right;
+                color: #999;
+
+                a {
+                    display: inline-block;
+                    margin: 0 3px;
+                    font-size: 9pt;
+                    text-decoration: none;
+                    color: #999;
+                    cursor: help;
+                }
+            }
+        }
+
+        input[type="text"] {
+            display: inline-block;
+            border: none;
+            background: #fcf8bb;
+            padding: 5px;
+            outline: none;
+        }
+
+        input[type="text"].account-name {
+            margin: 0 2px;
+        }
+
+        input[type="text"].api-token {
+            width: 400px;
+        }
+    }
+
+    div.footer {
+        padding-top: 10px;
+        border-top: 3px solid #ddd;
+        font-size: 8pt;
+
+        div.created {
+            float: left;
+            padding-left: 20px;
+            background: url("../images/roowii.png") no-repeat 0 1px;
+        }
+
+        a {
+            color: #999;
+        }
     }
 }
 
