@@ -525,6 +525,7 @@ div.options-editor div.container ul.menu li a:hover {
 }
 div.options-editor div.container ul.menu li.selected a {
   background-color: #eee !important;
+  cursor: default;
 }
 div.options-editor div.container ul.menu li.account a {
   background: url("../images/account.png") no-repeat 9px 10px;
@@ -539,13 +540,15 @@ div.options-editor div.container button.save-options {
   float: right;
 }
 div.options-editor div.content {
-  margin-top: 20px;
   padding-top: 20px;
-  border-top: 3px solid #ddd;
+  border-top: 3px solid #eee;
   font-size: 12pt;
 }
 div.options-editor div.content fieldset {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+}
+div.options-editor div.content fieldset:last-of-type {
+  margin-bottom: 20px;
 }
 div.options-editor div.content div.label {
   display: block;
@@ -562,6 +565,7 @@ div.options-editor div.content div.label div.what {
   display: block;
   float: right;
   color: #999;
+  cursor: default;
 }
 div.options-editor div.content div.label div.what a {
   display: inline-block;
@@ -576,9 +580,9 @@ div.options-editor div.content input[type="text"] {
   border: none;
   background: #fcf8bb;
   padding: 5px;
-  outline: none;
 }
 div.options-editor div.content input[type="text"].account-name {
+  width: 224px;
   margin: 0 2px;
 }
 div.options-editor div.content input[type="text"].api-token {
@@ -586,13 +590,17 @@ div.options-editor div.content input[type="text"].api-token {
 }
 div.options-editor div.footer {
   padding-top: 10px;
-  border-top: 3px solid #ddd;
+  border-top: 3px solid #eee;
   font-size: 8pt;
+  cursor: default;
 }
 div.options-editor div.footer div.created {
   float: left;
   padding-left: 20px;
   background: url("../images/roowii.png") no-repeat 0 1px;
+}
+div.options-editor div.footer div.social {
+  float: right;
 }
 div.options-editor div.footer a {
   color: #999;

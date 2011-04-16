@@ -299,6 +299,8 @@ happycamper.rooms = function() {
         roomListRefreshEnabled = false;
 
         executor.rooms.join(roomId, function() {
+            console.log(roomId);
+
             getBackground().happycamper.background.refreshWithCallback(function() {
                 makeRoomButtonActive(roomId);
                 openRoom(roomId);
@@ -331,11 +333,8 @@ happycamper.rooms = function() {
         $joining.fadeIn();
 
         executor.rooms.leave(roomId, function() {
-             getBackground().happycamper.background.refreshWithCallback(function() {
-                $joining.fadeOut();
-                makeRoomButtonInactive(roomId);
-                openDefaultRoom();
-            });
+            // rooms list will change when rooms list change gets handled
+            getBackground().happycamper.background.refresh();
         });
     }
 

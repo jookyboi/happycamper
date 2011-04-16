@@ -1,21 +1,6 @@
 var happycamper = {};
 
-happycamper.settings = {
-    me: {
-        id: 855525,
-        name: "Rui Jiang",
-        email_address: "rjiang.bb@gmail.com"
-    },
-    refreshInterval: 10,
-    notifications: {
-        enabled: true,
-        showFor: 5
-    },
-    chat: {
-        showTimestamps: true,
-        showEnterLeave: true
-    }
-};
+happycamper.settings = {};
 
 happycamper.state = {
     visibleRooms: [],
@@ -30,7 +15,6 @@ happycamper.notifiedRooms = {
 };
 
 happycamper.background = function() {
-
     var executor = new Camper.Executor({
         url: "ruijiang.campfirenow.com",
         apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
@@ -55,15 +39,13 @@ happycamper.background = function() {
 
         // call once manually
         refreshLoop();
-
         setInterval(function() {
             refreshLoop();
         }, (happycamper.settings.refreshInterval * 1000));
     };
 
-    this.fullRefresh = function() {
-        initializeStateAndSettings();
-        refreshLoop();
+    this.refresh = function() {
+        refreshLoop();  
     };
 
     this.refreshRoom = function(roomId) {
@@ -86,15 +68,9 @@ happycamper.background = function() {
 
     // initialize
     function initializeStateAndSettings() {
-        var settings = happycamper.util.loadJson("settings");
         var state = happycamper.util.loadJson("state");
         var notifiedRooms = happycamper.util.loadJson("notifiedRooms");
-
-        if (settings === null) {
-            happycamper.util.saveJson("settings", happycamper.settings);
-        } else {
-            happycamper.settings = settings;
-        }
+        happycamper.settings = happycamper.util.loadJson("settings");
 
         if (state === null) {
             saveState();
@@ -172,6 +148,7 @@ happycamper.background = function() {
     function setActiveRoomStates() {
         var state = happycamper.state;
 
+        console.log(state.activeRooms);
         if (state.activeRooms === undefined) {
             // hasn't been populated yet
             return;
@@ -190,7 +167,7 @@ happycamper.background = function() {
 
                 saveState();
             }
-            
+
             getUsersAndMessagesForRoom(room);
             getRecentUploadsForRoom(room);
         }
@@ -206,10 +183,13 @@ happycamper.background = function() {
 
             // not all users and files have been set
             var checkUnnamedInterval = setInterval(function() {
-                if (!missingInfo(messages, uploads) || ++tryCount === 5) {
-                    saveStateAndRefresh(room, callRefresh);
+                if (!missingInfo(messages, uploads) || tryCount === 5) {
                     clearInterval(checkUnnamedInterval);
+                    saveStateAndRefresh(room, callRefresh);
                 }
+
+                tryCount++;
+                console.log(tryCount);
             }, 1000);
         } else {
             saveStateAndRefresh(room, callRefresh);
@@ -295,6 +275,10 @@ happycamper.background = function() {
     }
 
     function getMessagesForRoom(room) {
+        if (room.id === 386540) {
+            console.log("room");
+        }
+
         var roomState = getActiveRoomState(room.id);
         var arguments = {};
         var fullRefresh = true;
@@ -311,71 +295,72 @@ happycamper.background = function() {
         }
 
         executor.rooms.recentMessages(room.id, arguments, function(messagesData) {
-            var messages = getMessagesWithUser(messagesData.messages, roomState);
-            messages = getMessagesWithTimestamp(messages);
+            var messages = messagesData.messages;
 
-            // async call
-            getFileForMessages(room.id, messages);
+            // this is an async call, must wait for all users to come back
+            setAllUsersForMessages(messages);
 
-            if (fullRefresh) {
-                roomState.messages = messages;
-                saveStateOnLoadComplete(room, false);
-            } else {
-                roomState.messages = roomState.messages.concat(messages);
-
-                if (messages.length > 0) {
-                    showMessageNotifications(messages, room);
-                    saveStateOnLoadComplete(room, true);
+            var tryCount = 0;
+            var checkUsersInterval = setInterval(function() {
+                if (newUserIdsForMessages(messages).length === 0 || tryCount === 20) {
+                    clearInterval(checkUsersInterval);
+                    setPropertiesForMessages(messages, room, roomState, fullRefresh);
                 }
-            }
+
+                tryCount++;
+            }, 200);
         });
     }
 
-    function getMessagesWithUser(messages, roomState) {
+    function setPropertiesForMessages(messages, room, roomState, fullRefresh) {
+        messages = getMessagesWithUser(messages);
+        messages = getMessagesWithTimestamp(messages);
+
+        getFileForMessages(room.id, messages);
+
+        if (fullRefresh) {
+            roomState.messages = messages;
+            saveStateOnLoadComplete(room, false);
+        } else {
+            roomState.messages = roomState.messages.concat(messages);
+
+            if (messages.length > 0) {
+                showMessageNotifications(messages, room);
+                saveStateOnLoadComplete(room, true);
+            }
+        }
+    }
+
+    function setAllUsersForMessages(messages) {
+        var newUserIds = newUserIdsForMessages(messages);
+
+        $.each(uniqueOfArray(newUserIds), function(index, userId) {
+            executor.users.show(userId, function(userData) {
+                setUser(userData.user);
+                saveState();
+            });
+        });
+    }
+
+    function getMessagesWithUser(messages) {
         return jLinq.from(messages)
             .select(function(message) {
-                message.user = getUserForMessage(message, roomState);
+                message.user = getUserForMessage(message);
                 return message;
             });
     }
 
-    function getUserForMessage(message, roomState) {
+    function getUserForMessage(message) {
         var userId = message.user_id;
 
-        if (userId === null)
-            return null;
-
-        var user = jLinq.from(roomState.users)
-            .where(function(user) {
-                return user.id === userId;
-            }).first();
+        // user not present, find within allUsers
+        var user = getUser(userId);
 
         if (user !== undefined) {
-            setUser(user);
             return user;
         }
 
-        // user not present, find within allUsers
-        user = getUserFromAllUsers(userId);
-
-        if (user !== undefined)
-            return user;
-
-        // get from campfire
-        setCampfireUserForMessage(message);
-        
         return null;
-    }
-
-    function getUserFromAllUsers(userId) {
-        jLinq.from(happycamper.state.allUsers)
-             .equals("id", userId).first();
-    }
-
-    function setCampfireUserForMessage(message) {
-        executor.users.show(message.user_id, function(userData) {
-            message.user = userData.user;
-        });
     }
 
     function getMessagesWithTimestamp(messages) {
@@ -438,7 +423,7 @@ happycamper.background = function() {
         if (userId === null)
             return null;
 
-        var user = getUserFromAllUsers(userId);
+        var user = getUser(userId);
 
         if (user !== undefined)
             return user;
@@ -532,9 +517,7 @@ happycamper.background = function() {
 
     function getUser(userId) {
         return jLinq.from(happycamper.state.allUsers)
-            .where(function(user) {
-                return user.id === userId;
-            }).first();
+             .equals("id", userId).first();
     }
 
     function setUser(user) {
@@ -543,12 +526,35 @@ happycamper.background = function() {
         }
     }
 
+    function newUserIdsForMessages(messages) {
+        return jLinq.from(messages)
+            .where(function(message) {
+                return (message.user_id !== null && getUser(message.user_id) === undefined);
+            }).select(function(message) {
+                return message.user_id;
+            });
+    }
+
     function messageHasBody(message) {
         var TYPES = happycamper.util.MESSAGE_TYPES;
 
         return (message.type === TYPES.TEXT ||
                 message.type === TYPES.PASTE ||
                 message.type === TYPES.UPLOAD);
+    }
+
+    // from: http://www.devcurry.com/2010/04/remove-duplicate-elements-from-array.html
+    function uniqueOfArray (arrVal) {
+        var uniqueArr = [];
+        
+        for (var i = arrVal.length; i--; ) {
+            var val = arrVal[i];
+            if ($.inArray(val, uniqueArr) === -1) {
+                uniqueArr.unshift(val);
+            }
+        }
+
+        return uniqueArr;
     }
 
     function loadState() {

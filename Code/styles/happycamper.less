@@ -550,6 +550,7 @@ div.options-editor {
 
             li.selected a {
                 background-color: #eee !important;
+                cursor: default;
             }
 
             li.account a {
@@ -571,13 +572,16 @@ div.options-editor {
     }
 
     div.content {
-        margin-top: 20px;
         padding-top: 20px;
-        border-top: 3px solid #ddd;
+        border-top: 3px solid #eee;
         font-size: 12pt;
 
         fieldset {
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+        }
+
+        fieldset:last-of-type {
+            margin-bottom: 20px;
         }
 
         div.label {
@@ -596,6 +600,7 @@ div.options-editor {
                 display: block;
                 float: right;
                 color: #999;
+                cursor: default;
 
                 a {
                     display: inline-block;
@@ -613,10 +618,10 @@ div.options-editor {
             border: none;
             background: #fcf8bb;
             padding: 5px;
-            outline: none;
         }
 
         input[type="text"].account-name {
+            width: 224px;
             margin: 0 2px;
         }
 
@@ -627,13 +632,18 @@ div.options-editor {
 
     div.footer {
         padding-top: 10px;
-        border-top: 3px solid #ddd;
+        border-top: 3px solid #eee;
         font-size: 8pt;
+        cursor: default;
 
         div.created {
             float: left;
             padding-left: 20px;
             background: url("../images/roowii.png") no-repeat 0 1px;
+        }
+
+        div.social {
+            float: right;
         }
 
         a {
