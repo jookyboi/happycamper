@@ -1,5 +1,3 @@
-var happycamper = {};
-
 happycamper.settings = {};
 
 happycamper.state = {

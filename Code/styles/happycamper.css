@@ -575,6 +575,10 @@ div.options-editor div.content div.label div.what a {
   color: #999;
   cursor: help;
 }
+div.options-editor div.content div.choice {
+  margin: 5px 0 0 2px;
+  cursor: default;
+}
 div.options-editor div.content input[type="text"] {
   display: inline-block;
   border: none;
@@ -626,4 +630,9 @@ button.white {
 }
 button.white:hover {
   background: -webkit-gradient(linear, left top, left bottom, from(white), to(#dcdcdc));
+}
+.qtip label.tooltip {
+  margin-bottom: 5px;
+  font-size: 9pt;
+  font-weight: bold;
 }

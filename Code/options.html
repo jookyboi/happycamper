@@ -5,10 +5,30 @@
     <title>Happy Camper Options</title>
 
     <link rel="stylesheet" href="styles/reset.css" />
+    <link rel="stylesheet" href="styles/jquery.qtip.min.css" />
     <link rel="stylesheet" href="styles/happycamper.css" />
 
+    <script type="text/javascript">
+        var happycamper = {};
+    </script>
+
+    <script type="text/javascript" src="scripts/plugins/jquery-1.5.1.min.js"></script>
+    <script type="text/javascript" src="scripts/plugins/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="scripts/happycamper.util.js"></script>
+    <script type="text/javascript" src="scripts/plugins/jquery.qtip.min.js"></script>
     <script type="text/javascript" src="scripts/options.js"></script>
+
+    <script id="what-account-name-template" type="text/x-jquery-tmpl">
+        <label class="tooltip">The account name can be found as part of your Campfire url:</label>
+        <img src="images/account-name.png" />
+    </script>
+
+    <script id="what-api-token-template" type="text/x-jquery-tmpl">
+        <label class="tooltip">Click on "My info" at the top-right corner of Campfire:</label>
+        <img src="images/token-step-1.png" /><br /><br />
+        <label class="tooltip">Copy the API authentication token found on the "My info" page:</label>
+        <img src="images/token-step-2.png" />
+    </script>
 </head>
 <body>
     <div class="options-editor">
@@ -21,11 +41,11 @@
             </ul>
             <button class="white save-options">Save</button>
             <div class="clear"></div>
-            <div class="account content">
+            <div class="content" id="account">
                 <fieldset>
                     <div class="label">
                         <label>Account name</label>
-                        <div class="what">(<a href="#">What's this?</a>)</div>
+                        <div class="what">(<a href="#" class="account">What's this?</a>)</div>
                         <div class="clear"></div>
                     </div>
                     https://<input type="text" class="account-name" />.campfirenow.com
@@ -33,17 +53,52 @@
                 <fieldset>
                     <div class="label">
                         <label>API token</label>
-                        <div class="what">(<a href="#">What's this?</a>)</div>
+                        <div class="what">(<a href="#" class="token">What's this?</a>)</div>
                         <div class="clear"></div>
                     </div>
                     <input type="text" class="api-token" />
                 </fieldset>
             </div>
 
-            <div class="chat content" style="display: none;">
+            <div class="content" id="chat" style="display: none;">
+                <fieldset>
+                    <div class="label">
+                        <label>Toggle messages</label>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="choice">
+                        <input type="checkbox" name="show-timestamps" /> Show timestamp messages<br />
+                    </div>
+                    <div class="choice">
+                        <input type="checkbox" name="show-enter-leave" /> Show enter and leave messages
+                    </div>
+                </fieldset>
             </div>
 
-            <div class="notifications content" style="display: none;"></div>
+            <div class="content" id="notifications" style="display: none;">
+                <fieldset>
+                    <div class="label">
+                        <label>Turn notifications on / off</label>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="choice">
+                        <input type="checkbox" name="notifications-enabled"> Enable notifications
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <div class="label">
+                        <label>Show each notification for</label>
+                        <div class="clear"></div>
+                    </div>
+                    <select name="notifications-show-for">
+                        <option value="10">10 seconds</option>
+                        <option value="30">30 seconds</option>
+                        <option value="120">2 minutes</option>
+                        <option value="300">5 minutes</option>
+                        <option value="-1">Until I close</option>
+                    </select>
+                </fieldset>
+            </div>
 
             <div class="footer">
                 <div class="created">
