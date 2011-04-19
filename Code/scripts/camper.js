@@ -89,6 +89,10 @@ var Camper = Camper || {};
             execute(routes.users.show(userId), "GET", {}, callback);  
         };
 
+        this.users.showAuthenticatedUser = function(callback) {
+            execute(routes.users.showAuthenticatedUser(), "GET", {}, callback);
+        };
+
         // search
         this.search = function(term, callback) {
             execute(routes.search(term), "GET", {}, callback);
@@ -112,7 +116,7 @@ var Camper = Camper || {};
                     // success doesn't get called with an empty response
                     // this is needed for join to function correctly
                     if (!successCalled) {
-                        callback(data);
+                        callback(data, textStatus);
                     }
                 }
             });

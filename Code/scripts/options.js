@@ -1,8 +1,8 @@
 // just defaults
 happycamper.settings = {
     account: {
-        name: "ruijiang",
-        apiToken: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
+        name: "",
+        apiToken: ""
     },
     me: null,
     refreshInterval: 10,
@@ -21,6 +21,7 @@ happycamper.options = function() {
     var $accountName, $apiToken;
     var $showTimestamps, $showEnterLeave;
     var $notificationsEnabled, $notificationsShowFor;
+    var $error;
 
     // public
     this.initialize = function() {
@@ -28,6 +29,8 @@ happycamper.options = function() {
         initializeSettings();
         wireTabs();
         qtipWhatsThis();
+
+        wireSave();
     };
 
     // initialize
@@ -38,6 +41,8 @@ happycamper.options = function() {
         $showEnterLeave = $("input[name='show-enter-leave']");
         $notificationsEnabled = $("input[name='notifications-enabled']");
         $notificationsShowFor = $("select[name='notifications-show-for']");
+
+        $error = $("div.error");
     }
 
     function initializeSettings() {
@@ -80,7 +85,6 @@ happycamper.options = function() {
         $notificationsShowFor.val(settings.notifications.showFor);
     }
 
-
     // tabs
     function wireTabs() {
         $("ul.menu li a").click(function() {
@@ -94,7 +98,89 @@ happycamper.options = function() {
         });
     }
 
+    // save settings
+    function wireSave() {
+        $("button.save-options").click(function() {
+            $(this).html('<img src="images/save.gif" />');
+            saveSettings();
+            $error.hide();
+
+            return false;
+        });
+    }
+
+    function saveSettings() {
+        var settings = happycamper.settings;
+
+        // check whether account info updated
+        var accountName = $.trim($accountName.val());
+        var apiToken = $.trim($apiToken.val());
+        var verifyingAccount = false;
+
+        if (settings.account.name !== accountName ||
+            settings.account.apiToken !== apiToken) {
+            updateAccount(accountName, apiToken);
+            verifyingAccount = true;
+        }
+
+        // chat
+        settings.chat.showTimestamps = $showTimestamps.is(":checked");
+        settings.chat.showEnterLeave = $showEnterLeave.is(":checked");
+
+        // notifications
+        settings.notifications.enabled = $notificationsEnabled.is(":checked");
+        settings.notifications.showFor = $notificationsShowFor.val();
+
+        happycamper.util.saveJson("settings", settings);
+
+        if (!verifyingAccount) {
+            resetSaveOptionsButton();
+        }
+    }
+
+    function updateAccount(accountName, apiToken) {
+        var executor = new Camper.Executor({
+            url: accountName + ".campfirenow.com",
+            apikey: apiToken
+        });
+
+        executor.users.showAuthenticatedUser(function(userData, status) {
+            if (status === "error") {
+                // user is not authorized by campfire
+                $("button.save-options").html("Save");
+                $error.show();
+
+                return;
+            }
+
+            var settings = happycamper.settings;
+
+            settings.me = userData.user;
+            settings.account.name = accountName;
+            settings.account.apiToken = apiToken;
+
+            happycamper.util.saveJson("settings", happycamper.settings);
+
+            // force state refresh
+            happycamper.util.saveJson("state", null);
+            refreshBackground();
+
+            resetSaveOptionsButton();
+        });
+    }
+
     // utilities
+    function resetSaveOptionsButton() {
+        // make user think something more substantial is happening
+        setTimeout(function() {
+            $("button.save-options").html("Save");
+        }, 2000);
+    }
+
+    function refreshBackground() {
+        chrome.extension.getBackgroundPage().happycamper.background.refreshPage();
+    }
+
     function qtipWhatsThis() {
         createTooltip($("div.what a.account"), $("#what-account-name-template").tmpl());
         createTooltip($("div.what a.token"), $("#what-api-token-template").tmpl())

@@ -12,11 +12,10 @@ happycamper.notifiedRooms = {
     roomIds: []
 };
 
+console.log("refreshed");
+
 happycamper.background = function() {
-    var executor = new Camper.Executor({
-        url: "ruijiang.campfirenow.com",
-        apikey: "1eb3d67b287357b919ccb88f83056a636a7a9e5e"
-    });
+    var executor;
 
     /*
     var executor = new Camper.Executor({
@@ -34,6 +33,7 @@ happycamper.background = function() {
     // public
     this.initialize = function() {
         initializeStateAndSettings();
+        initializeExecutor();
 
         // call once manually
         refreshLoop();
@@ -64,6 +64,10 @@ happycamper.background = function() {
         return executor;
     };
 
+    this.refreshPage = function() {
+        location.reload(true);
+    };
+
     // initialize
     function initializeStateAndSettings() {
         var state = happycamper.util.loadJson("state");
@@ -81,6 +85,15 @@ happycamper.background = function() {
         } else {
             happycamper.notifiedRooms = notifiedRooms;
         }
+    }
+
+    function initializeExecutor() {
+        var settings = happycamper.settings;
+
+        executor = new Camper.Executor({
+            url: settings.account.name + ".campfirenow.com",
+            apikey: settings.account.apiToken
+        });
     }
 
     function refreshLoop() {
@@ -145,8 +158,6 @@ happycamper.background = function() {
 
     function setActiveRoomStates() {
         var state = happycamper.state;
-
-        console.log(state.activeRooms);
         if (state.activeRooms === undefined) {
             // hasn't been populated yet
             return;
