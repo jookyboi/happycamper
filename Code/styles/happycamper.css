@@ -585,11 +585,11 @@ div.options-editor div.content input[type="text"] {
   background: #fcf8bb;
   padding: 5px;
 }
-div.options-editor div.content input[type="text"].account-name {
-  width: 224px;
+div.options-editor div.content input[name="account-name"] {
+  width: 120px;
   margin: 0 2px;
 }
-div.options-editor div.content input[type="text"].api-token {
+div.options-editor div.content input[name="api-token"] {
   width: 400px;
 }
 div.options-editor div.footer {
