@@ -127,8 +127,8 @@ happycamper.rooms = function() {
         $scrollbox.html("");
 
         templateActiveRooms();
-        templateLockedRooms();
         templateInactiveRooms();
+        templateLockedRooms();
 
         wireMainTabs();
         wireOpenRoom();
@@ -139,12 +139,12 @@ happycamper.rooms = function() {
         $("#room-template").tmpl(activeRooms).appendTo($scrollbox);
     }
 
-    function templateLockedRooms() {
-        $("#room-template").tmpl(getLockedRooms()).appendTo($scrollbox);
-    }
-
     function templateInactiveRooms() {
         $("#room-template").tmpl(getInactiveRooms()).appendTo($scrollbox);
+    }
+
+    function templateLockedRooms() {
+        $("#room-template").tmpl(getLockedRooms()).appendTo($scrollbox);
     }
 
     // switch tabs
@@ -265,6 +265,10 @@ happycamper.rooms = function() {
             if (!roomListRefreshEnabled)
                 return false;
 
+            // can't enter a room locked by somebody else
+            if ($(this).hasClass("locked"))
+                return false;
+
             var $room = $(this);
             var roomId = parseInt($room.attr("roomid"));
             var roomState = getRoomState(roomId);
@@ -353,8 +357,6 @@ happycamper.rooms = function() {
         roomListRefreshEnabled = false;
 
         executor.rooms.join(roomId, function() {
-            console.log(roomId);
-
             getBackground().happycamper.background.refreshWithCallback(function() {
                 makeRoomButtonActive(roomId);
                 openRoom(roomId);
@@ -875,13 +877,6 @@ happycamper.rooms = function() {
     function makeRoomButtonSelected(roomId) {
         $roomsList.find("div.room.selected").removeClass("selected");
         $roomsList.find("div.room[roomid='" + roomId + "']").addClass("selected");
-    }
-
-    function makeRoomButtonInactive(roomId) {
-        $roomsList.find("div.room[roomid='" + roomId + "']")
-                  .removeClass("active")
-                  .removeClass("locked")
-                  .addClass("inactive");
     }
 
     function addNotifyIconToRoomButton(roomId) {

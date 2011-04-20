@@ -88,9 +88,13 @@ div.viewer div.rooms div.room.inactive {
 }
 div.viewer div.rooms div.room.locked {
   background: #f1f1f1 url("../images/lock.png") no-repeat 6px 8px;
+  cursor: default;
 }
 div.viewer div.rooms div.room:hover {
   background-color: #eaeaea !important;
+}
+div.viewer div.rooms div.room.locked:hover {
+  background-color: #f1f1f1 !important;
 }
 div.viewer div.rooms div.room.selected {
   border: 1px solid #fff;
