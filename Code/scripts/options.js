@@ -51,6 +51,9 @@ happycamper.options = function() {
         if (settings === null) {
             // just save default
             happycamper.util.saveJson("settings", happycamper.settings);
+
+            // on first load background needs new settings
+            refreshBackgroundSettings();
         } else {
             happycamper.settings = settings;
         }
@@ -132,6 +135,7 @@ happycamper.options = function() {
         settings.notifications.showFor = $notificationsShowFor.val();
 
         happycamper.util.saveJson("settings", settings);
+        refreshBackgroundSettings();
 
         if (!verifyingAccount) {
             resetSaveOptionsButton();
@@ -179,6 +183,10 @@ happycamper.options = function() {
 
     function refreshBackground() {
         chrome.extension.getBackgroundPage().happycamper.background.refreshPage();
+    }
+
+    function refreshBackgroundSettings() {
+        chrome.extension.getBackgroundPage().happycamper.background.refreshSettings();
     }
 
     function qtipWhatsThis() {

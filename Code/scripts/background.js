@@ -12,17 +12,8 @@ happycamper.notifiedRooms = {
     roomIds: []
 };
 
-console.log("refreshed");
-
 happycamper.background = function() {
     var executor;
-
-    /*
-    var executor = new Camper.Executor({
-       url: "zssd.campfirenow.com",
-       apikey: "ae0639b97a54548f298845b9a9075b87892259a4"
-    });
-    */
 
     // used for removing spinner once room has loaded
     var roomCallback = null;
@@ -32,6 +23,8 @@ happycamper.background = function() {
 
     // public
     this.initialize = function() {
+        openOptionsOnFirstLoad();
+        
         initializeStateAndSettings();
         initializeExecutor();
 
@@ -68,6 +61,10 @@ happycamper.background = function() {
         location.reload(true);
     };
 
+    this.refreshSettings = function() {
+        happycamper.settings = happycamper.util.loadJson("settings");
+    };
+
     // initialize
     function initializeStateAndSettings() {
         var state = happycamper.util.loadJson("state");
@@ -96,8 +93,26 @@ happycamper.background = function() {
         });
     }
 
+    // options
+    function openOptionsOnFirstLoad() {
+        if (happycamper.util.loadJson("firstLoaded") === null) {
+            chrome.tabs.create({
+                url: "options.html"
+            });
+
+            happycamper.util.saveJson("firstLoaded", true);
+        }
+    }
+
+    // refresh
     function refreshLoop() {
         loadState();
+
+        if (happycamper.settings.me === null) {
+            // user hasn't filled in account info yet
+            console.log("no fill");
+            return;
+        }
 
         // deep copy
         var newState = $.extend(true, {}, happycamper.state);
@@ -198,7 +213,6 @@ happycamper.background = function() {
                 }
 
                 tryCount++;
-                console.log(tryCount);
             }, 1000);
         } else {
             saveStateAndRefresh(room, callRefresh);

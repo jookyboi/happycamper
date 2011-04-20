@@ -5,6 +5,7 @@ happycamper.rooms = function() {
     var visibleRooms;
     var activeRooms;
 
+    var $options;
     var $rooms;
     var $roomsList;
     var $scrollbox;
@@ -27,9 +28,18 @@ happycamper.rooms = function() {
     var downScrolling = false;
 
     function initialize() {
+        if (noApiState()) {
+            return;
+        }
+
         visibleRooms = happycamper.state.visibleRooms;
         activeRooms = happycamper.state.activeRooms;
 
+        if (noRooms(visibleRooms)) {
+            return;
+        }
+
+        $options = $("div.options");
         $rooms = $("div.rooms");
         $roomsList = $("div.rooms div.list");
         $scrollbox = $roomsList.find("div.scrollbox");
@@ -40,6 +50,8 @@ happycamper.rooms = function() {
         $usersFilter = $main.find("div.filters select.users-filter");
         $typesFilter = $main.find("div.filters select.types-filter");
 
+        wireOptionsButton();
+        
         templateRooms();
         wireUpDownButtons();
         wireMouseWheel();
@@ -64,6 +76,50 @@ happycamper.rooms = function() {
         $.each(notifiedRooms.roomIds, function(index, roomId) {
             addNotifyIconToRoomButton(roomId);
         });
+    }
+
+    // options
+    function wireOptionsButton() {
+        $options.unbind("click").click(function() {
+            chrome.tabs.create({
+                url: "options.html"
+            });
+        });
+    }
+
+    // blank states
+    function noApiState() {
+        if (happycamper.settings.me === null) {
+            $("div.viewer").hide();
+            
+            $("div.blank-slate.no-api").show()
+                .find("button").click(function() {
+                    chrome.tabs.create({
+                        url: "options.html"
+                    });
+                });
+
+            return true;
+        }
+
+        return false;
+    }
+
+    function noRooms(visibleRooms) {
+        if (visibleRooms.length === 0) {
+            $("div.viewer").hide();
+
+            $("div.blank-slate.no-rooms").show()
+                .find("button").click(function() {
+                    chrome.tabs.create({
+                        url: "https://" + happycamper.settings.account.name + ".campfirenow.com"
+                    });
+                });
+
+            return true;
+        }
+
+        return false;
     }
 
     // templating
