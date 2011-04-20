@@ -471,9 +471,6 @@ happycamper.background = function() {
             return;
 
         $.each(newMessages, function(index, message) {
-             //if (message.user_id === happycamper.settings.me.id)
-             //    return true; // skip if it is user himself
-
             if (!messageHasBody(message) || isPopupOpen())
                 return true;
 

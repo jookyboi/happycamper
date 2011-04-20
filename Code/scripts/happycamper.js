@@ -407,16 +407,23 @@ happycamper.rooms = function() {
         formatTimestampMessages(messages);
 
         var TYPES = happycamper.util.MESSAGE_TYPES;
+        var chatSettings = happycamper.settings.chat;
 
         $.each(messages, function(index, message) {
             fillInForEmptyUser(message, roomState);
 
             if (message.type === TYPES.ENTER) {
-                $("#enter-message-template").tmpl(message).appendTo($conversationBox);
+                if (chatSettings.showEnterLeave) {
+                    $("#enter-message-template").tmpl(message).appendTo($conversationBox);
+                }
             } else if (message.type === TYPES.LEAVE || message.type === TYPES.KICK) {
-                $("#leave-message-template").tmpl(message).appendTo($conversationBox);
+                if (chatSettings.showEnterLeave) {
+                    $("#leave-message-template").tmpl(message).appendTo($conversationBox);
+                }
             } else if (message.type === TYPES.TIMESTAMP) {
-                $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
+                if (chatSettings.showTimestamps) {
+                    $("#timestamp-message-template").tmpl(message).appendTo($conversationBox);
+                }
             } else if (message.type === TYPES.TEXT) {
                 insertWhoMessage(messages, message, index, $conversationBox);
                 $("#text-message-template").tmpl(replaceURLWithHTMLLinks(message)).appendTo($conversationBox);
