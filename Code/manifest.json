@@ -1,7 +1,7 @@
 {
 	"name": "Happy Camper",
 	"version": "1.0.0",
-	"description": "Read from, write to, and get notifications on activity in Campfire rooms.",
+	"description": "Fully-loaded client for Campfire chat rooms. Features message search and notifications.",
 	"browser_action": {
 		"default_icon": "images/action-icon.png",
 		"default_title": "Show Happy Camper",
