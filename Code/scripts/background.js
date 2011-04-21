@@ -40,6 +40,10 @@ happycamper.background = function() {
     };
 
     this.refreshRoom = function(roomId) {
+		// fixes a race condition whereby the background
+		// gets outof sync with the popup
+		happycamper.state.openRoomId = roomId;
+	
         var room = getActiveRoom(roomId);
         getUsersAndMessagesForRoom(room);
     };

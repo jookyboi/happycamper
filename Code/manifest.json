@@ -1,6 +1,6 @@
 {
 	"name": "Happy Camper",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Fully-loaded client for Campfire chat rooms. Features message search and notifications.",
 	"browser_action": {
 		"default_icon": "images/action-icon.png",
