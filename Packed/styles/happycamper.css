@@ -1,0 +1,653 @@
+/* mixins */
+.scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
+  border: 1px solid #ccc;
+}
+.scrollbar-thumb-hover {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+body {
+  font-family: arial, sans-serif;
+  font-size: 9pt;
+  color: #333;
+}
+div.viewer {
+  width: 615px;
+}
+div.viewer div.rooms {
+  width: 150px;
+  float: left;
+  margin-left: 15px;
+  position: relative;
+}
+div.viewer div.rooms div.header {
+  background: #fff;
+  padding: 10px 0;
+  height: 30px;
+}
+div.viewer div.rooms div.options, div.viewer div.rooms div.room {
+  padding: 5px 5px 5px 21px;
+}
+div.viewer div.rooms div.options {
+  border: 1px solid #eae59d;
+  background: #fcf8bb url("../images/settings.png") no-repeat 6px 7px;
+  color: #726c24;
+  cursor: pointer;
+}
+div.viewer div.rooms div.options:hover {
+  background-color: #f9f5b1;
+}
+div.viewer div.rooms div.scroll-up, div.viewer div.rooms div.scroll-down {
+  width: 150px;
+  height: 10px;
+  opacity: 0;
+  margin-top: 3px;
+}
+div.viewer div.rooms div.scroll-up.active, div.viewer div.rooms div.scroll-down.active {
+  opacity: 0.5;
+  cursor: pointer;
+}
+div.viewer div.rooms div.scroll-up.active:hover, div.viewer div.rooms div.scroll-down.active:hover {
+  opacity: 1.0;
+}
+div.viewer div.rooms div.scroll-up {
+  background: url("../images/scroll-up.png") no-repeat 50% 2px;
+}
+div.viewer div.rooms div.scroll-down {
+  background: url("../images/scroll-down.png") no-repeat 50% 0;
+}
+div.viewer div.rooms div.list {
+  height: 287px;
+  overflow: hidden;
+  position: relative;
+}
+div.viewer div.rooms div.room {
+  border-left: 1px solid #e9e9e9;
+  border-top: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+div.viewer div.rooms div.room div.notify {
+  float: right;
+  padding-right: 2px;
+  font-weight: bold;
+  color: #f67900;
+  display: none;
+}
+div.viewer div.rooms div.room.new-messages div.notify {
+  display: block;
+}
+div.viewer div.rooms div.room.active {
+  background: #f1f1f1 url("../images/active.png") no-repeat 6px 8px;
+}
+div.viewer div.rooms div.room.inactive {
+  background: #f1f1f1 url("../images/inactive.png") no-repeat 6px 8px;
+  color: #888;
+}
+div.viewer div.rooms div.room.locked {
+  background: #f1f1f1 url("../images/lock.png") no-repeat 6px 8px;
+  cursor: default;
+}
+div.viewer div.rooms div.room:hover {
+  background-color: #eaeaea !important;
+}
+div.viewer div.rooms div.room.locked:hover {
+  background-color: #f1f1f1 !important;
+}
+div.viewer div.rooms div.room.selected {
+  border: 1px solid #fff;
+  background-color: #fff;
+  cursor: default;
+}
+div.viewer div.rooms div.room.selected:hover {
+  background-color: #fff !important;
+}
+div.viewer div.rooms div.room.last {
+  border-bottom: 1px solid #ddd;
+}
+div.viewer div.content {
+  float: left;
+  width: 415px;
+  margin: 50px 0 0 20px;
+}
+div.viewer div.content ul.tabs {
+  display: inline-block;
+  width: 300px;
+  float: left;
+}
+div.viewer div.content ul.tabs li {
+  list-style: none;
+  display: inline-block;
+  padding: 5px 10px 5px 25px;
+  cursor: pointer;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+  border-top: 1px solid #fff;
+}
+div.viewer div.content ul.tabs li.chat {
+  background: url("../images/chat.png") no-repeat 8px 5px;
+}
+div.viewer div.content ul.tabs li.users {
+  background: url("../images/users.png") no-repeat 11px 6px;
+  padding-left: 28px;
+}
+div.viewer div.content ul.tabs li.files {
+  background: url("../images/files.png") no-repeat 8px 4px;
+}
+div.viewer div.content ul.tabs li.search {
+  background: url("../images/search.png") no-repeat 9px 6px;
+}
+div.viewer div.content ul.tabs li.selected {
+  background-color: #f1f1f1;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #e9e9e9;
+}
+div.viewer div.content ul.tabs li.selected:hover {
+  background-color: #f1f1f1;
+  cursor: default;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #e9e9e9;
+}
+div.viewer div.content a.leave-room {
+  padding: 6px 19px 5px 10px;
+  float: right;
+  color: #333;
+  text-decoration: none;
+  background: url("../images/leave.png") no-repeat 46px;
+}
+div.viewer div.content div.tab-content {
+  background: #f1f1f1;
+  height: 280px;
+  padding: 10px;
+  border-top: 1px solid #e9e9e9;
+  border-left: 1px solid #e9e9e9;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-top: -1px;
+}
+div.viewer div.content div.tab-content div.group {
+  background: #fff;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  position: relative;
+}
+div.viewer div.content div.tab-content div.group div.info {
+  background: #f7f7f7;
+  height: 22px;
+  padding: 3px;
+}
+div.viewer div.content div.tab-content div.group div.info a {
+  font-size: 8pt;
+  color: #555;
+  display: inline-block;
+  margin-left: 2px;
+  text-decoration: none;
+}
+div.viewer div.content div.tab-content div.group div.info a:hover {
+  text-decoration: underline;
+}
+div.viewer div.content div.tab-content div.group div.info select {
+  font-size: 8pt;
+  border: 1px solid #ccc;
+  outline: 0;
+}
+div.viewer div.content div.tab-content div.group div.info select option {
+  padding: 0.2em;
+}
+div.viewer div.content div.tab-content div.group div.info select.users-filter {
+  width: 80px;
+}
+div.viewer div.content div.tab-content div.group div.info select.types-filter {
+  width: 80px;
+}
+div.viewer div.content div.tab-content div.group div.info input[type="text"].search-messages {
+  width: 377px;
+  outline: 0;
+  border: 1px solid #ddd;
+  padding: 2px;
+  font-size: 8pt;
+  color: #999;
+}
+div.viewer div.content div.tab-content div.group div.info input[type="text"].search-messages.active {
+  border: 1px solid #aaa;
+  color: #333;
+}
+div.viewer div.content div.tab-content div.group div.info.title {
+  cursor: default;
+  padding: 7px 6px;
+  height: 14px;
+}
+div.viewer div.content div.tab-content div.group div.info.input {
+  padding: 4px 4px 3px 4px;
+  height: 22px;
+}
+div.viewer div.content div.tab-content div.group div.overhang {
+  width: 391px;
+  height: 5px;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #666666), color-stop(99%, rgba(255, 255, 255, 0)));
+  position: absolute;
+  top: 28px;
+  opacity: 0.3;
+}
+div.viewer div.content div.tab-content.chat div.group, div.viewer div.content div.tab-content.search div.group {
+  height: 228px;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation,
+div.viewer div.content div.tab-content.search div.group div.conversation,
+div.viewer div.content div.tab-content.chat div.group div.results,
+div.viewer div.content div.tab-content.search div.group div.results {
+  float: left;
+  padding: 5px;
+  width: 382px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity,
+div.viewer div.content div.tab-content.search div.group div.results div.activity {
+  padding: 3px;
+  border-bottom: 1px solid #f3f3f3;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.text,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity span.text,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity span.text,
+div.viewer div.content div.tab-content.search div.group div.results div.activity span.text {
+  width: 300px;
+  float: left;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.text pre,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity span.text pre,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity span.text pre,
+div.viewer div.content div.tab-content.search div.group div.results div.activity span.text pre {
+  font-family: monospace;
+  background-color: #f3f3f3;
+  white-space: pre-wrap;
+  border-top: 1px dotted #999;
+  border-bottom: 1px dotted #999;
+  padding: 3px 0;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.activity span.time,
+div.viewer div.content div.tab-content.search div.group div.conversation div.activity span.time,
+div.viewer div.content div.tab-content.chat div.group div.results div.activity span.time,
+div.viewer div.content div.tab-content.search div.group div.results div.activity span.time {
+  float: right;
+  color: #999;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.enter,
+div.viewer div.content div.tab-content.search div.group div.conversation div.enter,
+div.viewer div.content div.tab-content.chat div.group div.results div.enter,
+div.viewer div.content div.tab-content.search div.group div.results div.enter,
+div.viewer div.content div.tab-content.chat div.group div.conversation div.leave,
+div.viewer div.content div.tab-content.search div.group div.conversation div.leave,
+div.viewer div.content div.tab-content.chat div.group div.results div.leave,
+div.viewer div.content div.tab-content.search div.group div.results div.leave {
+  background: #D9E7FB;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.who,
+div.viewer div.content div.tab-content.search div.group div.conversation div.who,
+div.viewer div.content div.tab-content.chat div.group div.results div.who,
+div.viewer div.content div.tab-content.search div.group div.results div.who {
+  background: #f3f3f3;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.timestamp,
+div.viewer div.content div.tab-content.search div.group div.conversation div.timestamp,
+div.viewer div.content div.tab-content.chat div.group div.results div.timestamp,
+div.viewer div.content div.tab-content.search div.group div.results div.timestamp {
+  color: #aaa;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.lock,
+div.viewer div.content div.tab-content.search div.group div.conversation div.lock,
+div.viewer div.content div.tab-content.chat div.group div.results div.lock,
+div.viewer div.content div.tab-content.search div.group div.results div.lock,
+div.viewer div.content div.tab-content.chat div.group div.conversation div.unlock,
+div.viewer div.content div.tab-content.search div.group div.conversation div.unlock,
+div.viewer div.content div.tab-content.chat div.group div.results div.unlock,
+div.viewer div.content div.tab-content.search div.group div.results div.unlock {
+  background: #F6C1A9;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.upload,
+div.viewer div.content div.tab-content.search div.group div.conversation div.upload,
+div.viewer div.content div.tab-content.chat div.group div.results div.upload,
+div.viewer div.content div.tab-content.search div.group div.results div.upload {
+  background: url("../images/files.png") no-repeat 0 3px;
+  padding-left: 18px;
+  height: 15px;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.text span.star,
+div.viewer div.content div.tab-content.search div.group div.conversation div.text span.star,
+div.viewer div.content div.tab-content.chat div.group div.results div.text span.star,
+div.viewer div.content div.tab-content.search div.group div.results div.text span.star {
+  opacity: 0;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.text:hover span.star,
+div.viewer div.content div.tab-content.search div.group div.conversation div.text:hover span.star,
+div.viewer div.content div.tab-content.chat div.group div.results div.text:hover span.star,
+div.viewer div.content div.tab-content.search div.group div.results div.text:hover span.star {
+  opacity: 1.0;
+  background: url("../images/star-inactive.png") no-repeat;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation div.text.starred span.star,
+div.viewer div.content div.tab-content.search div.group div.conversation div.text.starred span.star,
+div.viewer div.content div.tab-content.chat div.group div.results div.text.starred span.star,
+div.viewer div.content div.tab-content.search div.group div.results div.text.starred span.star {
+  opacity: 1.0;
+  background: url("../images/star.png") no-repeat;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation, div.viewer div.content div.tab-content.search div.group div.conversation {
+  height: 190px;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.conversation::-webkit-scrollbar {
+  height: 0.5ex;
+  width: 8px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.search div.group div.conversation::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
+  border: 1px solid #ccc;
+}
+div.viewer div.content div.tab-content.chat div.group div.conversation::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.search div.group div.conversation::-webkit-scrollbar-thumb:hover {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+div.viewer div.content div.tab-content.chat div.group div.results, div.viewer div.content div.tab-content.search div.group div.results {
+  height: 241px;
+}
+div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar {
+  height: 0.5ex;
+  width: 8px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
+}
+div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
+  border: 1px solid #ccc;
+}
+div.viewer div.content div.tab-content.chat div.group div.results::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.search div.group div.results::-webkit-scrollbar-thumb:hover {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+div.viewer div.content div.tab-content.chat div.send, div.viewer div.content div.tab-content.search div.send {
+  margin-top: 10px;
+  padding: 5px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+div.viewer div.content div.tab-content.chat div.send textarea, div.viewer div.content div.tab-content.search div.send textarea {
+  overflow: hidden;
+  border: 0;
+  outline: 0;
+  float: left;
+  margin-right: 5px;
+  width: 314px;
+  resize: none;
+}
+div.viewer div.content div.tab-content.users div.group, div.viewer div.content div.tab-content.files div.group, div.viewer div.content div.tab-content.search div.group {
+  height: 280px;
+}
+div.viewer div.content div.tab-content.users div.group div.list, div.viewer div.content div.tab-content.files div.group div.list, div.viewer div.content div.tab-content.search div.group div.list {
+  height: 252px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+div.viewer div.content div.tab-content.users div.group div.list div.user,
+div.viewer div.content div.tab-content.files div.group div.list div.user,
+div.viewer div.content div.tab-content.search div.group div.list div.user,
+div.viewer div.content div.tab-content.users div.group div.list div.file,
+div.viewer div.content div.tab-content.files div.group div.list div.file,
+div.viewer div.content div.tab-content.search div.group div.list div.file {
+  padding: 10px 6px;
+  border-bottom: 1px solid #f3f3f3;
+  cursor: default;
+}
+div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes,
+div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes,
+div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes,
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes {
+  float: left;
+  width: 335px;
+}
+div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes span,
+div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes span,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes span,
+div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes span,
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes span {
+  display: block;
+}
+div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes span.email,
+div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes span.email,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes span.email,
+div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes span.email,
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span.email,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes span.email,
+div.viewer div.content div.tab-content.users div.group div.list div.user div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.files div.group div.list div.user div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.search div.group div.list div.user div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.users div.group div.list div.file div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.files div.group div.list div.file div.attributes span.uploaded-by,
+div.viewer div.content div.tab-content.search div.group div.list div.file div.attributes span.uploaded-by {
+  color: #888;
+}
+div.viewer div.content div.tab-content.users div.group div.list div.user img,
+div.viewer div.content div.tab-content.files div.group div.list div.user img,
+div.viewer div.content div.tab-content.search div.group div.list div.user img,
+div.viewer div.content div.tab-content.users div.group div.list div.file img,
+div.viewer div.content div.tab-content.files div.group div.list div.file img,
+div.viewer div.content div.tab-content.search div.group div.list div.file img,
+div.viewer div.content div.tab-content.users div.group div.list div.user a.download,
+div.viewer div.content div.tab-content.files div.group div.list div.user a.download,
+div.viewer div.content div.tab-content.search div.group div.list div.user a.download,
+div.viewer div.content div.tab-content.users div.group div.list div.file a.download,
+div.viewer div.content div.tab-content.files div.group div.list div.file a.download,
+div.viewer div.content div.tab-content.search div.group div.list div.file a.download {
+  float: right;
+}
+div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar, div.viewer div.content div.tab-content.search div.group div.list::-webkit-scrollbar {
+  height: 0.5ex;
+  width: 8px;
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #d6d6d6), color-stop(40%, #f4f4f4), color-stop(81%, #f4f4f4), color-stop(100%, #d6d6d6));
+}
+div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar-thumb, div.viewer div.content div.tab-content.search div.group div.list::-webkit-scrollbar-thumb {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #efefef), color-stop(100%, #dedede));
+  border: 1px solid #ccc;
+}
+div.viewer div.content div.tab-content.users div.group div.list::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.files div.group div.list::-webkit-scrollbar-thumb:hover, div.viewer div.content div.tab-content.search div.group div.list::-webkit-scrollbar-thumb:hover {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #f3f3f3), color-stop(100%, #e3e3e3));
+}
+div.viewer div.content div.tab-content.search div.loading {
+  height: 252px;
+  background: url(../images/loading.gif) no-repeat 50% 49%;
+}
+div.viewer div.content div.tab-content.search div.no-results {
+  padding-top: 115px;
+  text-align: center;
+}
+div.viewer div.content.join-room {
+  text-align: center;
+}
+div.viewer div.content.join-room span {
+  font-size: 12pt;
+  cursor: default;
+}
+div.viewer div.content.joining {
+  background: white url("../images/ajax.gif") no-repeat 50% 50%;
+  height: 327px;
+  opacity: 0.7;
+  z-index: 1000;
+  position: absolute;
+  left: 165px;
+}
+div.blank-slate {
+  width: 190px;
+  padding: 20px;
+  text-align: center;
+}
+div.blank-slate span {
+  font-size: 12pt;
+  display: block;
+  cursor: default;
+  margin-bottom: 10px;
+}
+div.blank-slate img {
+  margin-bottom: 20px;
+}
+div.options-editor {
+  margin: 30px auto 0 auto;
+  width: 410px;
+}
+div.options-editor div.container {
+  margin-top: 40px;
+}
+div.options-editor div.container ul.menu {
+  list-style: none;
+  float: left;
+}
+div.options-editor div.container ul.menu li {
+  display: inline-block;
+}
+div.options-editor div.container ul.menu li a {
+  display: inline-block;
+  padding: 10px 12px 10px 27px;
+  color: #333;
+  text-decoration: none;
+}
+div.options-editor div.container ul.menu li a:hover {
+  background-color: #f3f3f3 !important;
+}
+div.options-editor div.container ul.menu li.selected a {
+  background-color: #eee !important;
+  cursor: default;
+}
+div.options-editor div.container ul.menu li.account a {
+  background: url("../images/account.png") no-repeat 9px 10px;
+}
+div.options-editor div.container ul.menu li.chat a {
+  background: url("../images/chat.png") no-repeat 10px 10px;
+}
+div.options-editor div.container ul.menu li.notifications a {
+  background: url("../images/notifications.png") no-repeat 9px 10px;
+}
+div.options-editor div.container button.save-options {
+  float: right;
+  width: 60px;
+  height: 28px;
+}
+div.options-editor div.content {
+  padding-top: 20px;
+  border-top: 3px solid #eee;
+  font-size: 12pt;
+}
+div.options-editor div.content div.error {
+  background: url("../images/invalid-account.png") no-repeat 5px 4px;
+  color: #d9353c;
+  border: 1px solid #d9353c;
+  padding: 5px 7px 5px 25px;
+  cursor: default;
+  margin-bottom: 20px;
+  font-size: 9pt;
+}
+div.options-editor div.content fieldset {
+  margin-bottom: 20px;
+}
+div.options-editor div.content fieldset:last-of-type {
+  margin-bottom: 20px;
+}
+div.options-editor div.content div.label {
+  display: block;
+  font-weight: bold;
+  color: #999;
+  border-bottom: 1px dotted #ccc;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+div.options-editor div.content div.label label {
+  float: left;
+}
+div.options-editor div.content div.label div.what {
+  display: block;
+  float: right;
+  color: #999;
+  cursor: default;
+}
+div.options-editor div.content div.label div.what a {
+  display: inline-block;
+  margin: 0 3px;
+  font-size: 9pt;
+  text-decoration: none;
+  color: #999;
+  cursor: help;
+}
+div.options-editor div.content div.choice {
+  margin: 5px 0 0 2px;
+  cursor: default;
+}
+div.options-editor div.content input[type="text"] {
+  display: inline-block;
+  border: none;
+  background: #fcf8bb;
+  padding: 5px;
+}
+div.options-editor div.content input[name="account-name"] {
+  width: 120px;
+  margin: 0 2px;
+}
+div.options-editor div.content input[name="api-token"] {
+  width: 400px;
+}
+div.options-editor div.footer {
+  padding-top: 10px;
+  border-top: 3px solid #eee;
+  font-size: 8pt;
+  cursor: default;
+}
+div.options-editor div.footer div.created {
+  float: left;
+  padding-left: 20px;
+  background: url("../images/roowii.png") no-repeat 0 1px;
+}
+div.options-editor div.footer div.social {
+  float: right;
+}
+div.options-editor div.footer a {
+  color: #999;
+}
+div.clear {
+  clear: both;
+}
+button {
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font: 10pt/100%;
+  padding: .3em 1em .3em;
+  -webkit-border-radius: .5em;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+button.white {
+  color: #606060;
+  border: solid 1px #b7b7b7;
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#ededed));
+}
+button.white:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(white), to(#dcdcdc));
+}
+.qtip label.tooltip {
+  margin-bottom: 5px;
+  font-size: 9pt;
+  font-weight: bold;
+}

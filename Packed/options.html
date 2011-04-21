@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Happy Camper Options</title>
+
+    <link rel="stylesheet" href="styles/reset.css" />
+    <link rel="stylesheet" href="styles/jquery.qtip.min.css" />
+    <link rel="stylesheet" href="styles/happycamper.css" />
+
+    <script type="text/javascript">
+        var happycamper = {};
+    </script>
+
+    <script type="text/javascript" src="scripts/options.min.js"></script>
+
+    <script id="what-account-name-template" type="text/x-jquery-tmpl">
+        <label class="tooltip">The account name can be found as part of your Campfire url:</label>
+        <img src="images/account-name.png" />
+    </script>
+
+    <script id="what-api-token-template" type="text/x-jquery-tmpl">
+        <label class="tooltip">Click on "My info" at the top-right corner of Campfire:</label>
+        <img src="images/token-step-1.png" /><br /><br />
+        <label class="tooltip">Copy the API authentication token found on the "My info" page:</label>
+        <img src="images/token-step-2.png" />
+    </script>
+</head>
+<body>
+    <div class="options-editor">
+        <img src="images/options_header.png" />
+        <div class="container">
+            <ul class="menu">
+                <li class="account selected"><a href="#account">Account</a></li>
+                <li class="chat"><a href="#chat">Chat</a></li>
+                <li class="notifications"><a href="#notifications">Notifications</a></li>
+            </ul>
+            <button class="white save-options">Save</button>
+            <div class="clear"></div>
+            <div class="content" id="account">
+                <div class="error" style="display: none;">Invalid account name or API token. Please try again.</div>
+                <fieldset>
+                    <div class="label">
+                        <label>Account name</label>
+                        <div class="what">(<a href="#" class="account">What's this?</a>)</div>
+                        <div class="clear"></div>
+                    </div>
+                    https://<input type="text" name="account-name" />.campfirenow.com
+                </fieldset>
+                <fieldset>
+                    <div class="label">
+                        <label>API token</label>
+                        <div class="what">(<a href="#" class="token">What's this?</a>)</div>
+                        <div class="clear"></div>
+                    </div>
+                    <input type="text" name="api-token" />
+                </fieldset>
+            </div>
+
+            <div class="content" id="chat" style="display: none;">
+                <fieldset>
+                    <div class="label">
+                        <label>Toggle messages</label>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="choice">
+                        <input type="checkbox" name="show-timestamps" /> Show timestamp messages<br />
+                    </div>
+                    <div class="choice">
+                        <input type="checkbox" name="show-enter-leave" /> Show enter and leave messages
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="content" id="notifications" style="display: none;">
+                <fieldset>
+                    <div class="label">
+                        <label>Turn notifications on / off</label>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="choice">
+                        <input type="checkbox" name="notifications-enabled"> Enable notifications
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <div class="label">
+                        <label>Show each notification for</label>
+                        <div class="clear"></div>
+                    </div>
+                    <select name="notifications-show-for">
+                        <option value="10">10 seconds</option>
+                        <option value="30">30 seconds</option>
+                        <option value="120">2 minutes</option>
+                        <option value="300">5 minutes</option>
+                        <option value="-1">Until I close</option>
+                    </select>
+                </fieldset>
+            </div>
+
+            <div class="footer">
+                <div class="created">
+                    Created by Rui J of <a href="http://roowii.net" target="_blank">roowii.net</a>.<br />
+                    Source code at <a href="https://github.com/jookyboi" target="_blank">github.com/jookyboi</a>.
+                </div>
+                <div class="social">
+                    <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fgoogle.com&amp;layout=button_count&amp;show_faces=false&amp;width=80&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:80px; height:21px;" allowTransparency="true"></iframe>
+
+                </div>
+                <div class="clear"></div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

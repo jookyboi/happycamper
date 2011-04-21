@@ -110,7 +110,6 @@ happycamper.background = function() {
 
         if (happycamper.settings.me === null) {
             // user hasn't filled in account info yet
-            console.log("no fill");
             return;
         }
 
@@ -298,10 +297,6 @@ happycamper.background = function() {
     }
 
     function getMessagesForRoom(room) {
-        if (room.id === 386540) {
-            console.log("room");
-        }
-
         var roomState = getActiveRoomState(room.id);
         var arguments = {};
         var fullRefresh = true;

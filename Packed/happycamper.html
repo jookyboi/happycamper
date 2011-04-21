@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <link rel="stylesheet" href="styles/reset.css" />
+    <link rel="stylesheet" href="styles/happycamper.css" />
+
+    <script type="text/javascript">
+        var happycamper = {};
+    </script>
+
+    <script type="text/javascript" src="scripts/happycamper.min.js"></script>
+
+    <script id="room-template" type="text/x-jquery-tmpl">
+        <div class="room ${state}" roomid="${id}">
+            <div class="notify">!</div>
+            <span class="name">${name}</span>
+        </div>
+    </script>
+
+    <!-- chat tab templates -->
+    <script id="enter-message-template" type="text/x-jquery-tmpl">
+        <div class="activity enter">
+            <span class="text">${user.name} entered the room</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="leave-message-template" type="text/x-jquery-tmpl">
+        <div class="activity enter">
+            <span class="text">${user.name} left the room</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="timestamp-message-template" type="text/x-jquery-tmpl">
+        <div class="activity timestamp">
+            <span class="text">${date}</span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="who-message-template" type="text/x-jquery-tmpl">
+        <div class="activity who">
+            <span class="text">${user.name}:</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="text-message-template" type="text/x-jquery-tmpl">
+        <div class="activity text">
+            {{if hasLink}}
+                <span class="text">{{html body}}</span>
+            {{else}}
+                <span class="text">${body}</span>
+            {{/if}}
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="upload-message-template" type="text/x-jquery-tmpl">
+        <div class="activity upload">
+            <span class="text">
+                <a href="${upload.full_url}">${upload.name}</a>
+                (${upload.size} kb)
+            </span>
+            <span class="time">${timestamp}</span>
+        </div>
+    </script>
+
+    <script id="paste-message-template" type="text/x-jquery-tmpl">
+        <div class="activity paste">
+            <span class="text">
+                <pre>${body}</pre>
+            </span>
+            <span class="time">${timestamp}</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="lock-message-template" type="text/x-jquery-tmpl">
+        <div class="activity lock">
+            <span class="text">${user.name} has locked the room</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="unlock-message-template" type="text/x-jquery-tmpl">
+        <div class="activity unlock">
+            <span class="text">${user.name} has unlocked the room</span>
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <script id="filter-option-template" type="text/x-jquery-tmpl">
+        <option value="${id}" {{if id == "all"}}selected="selected"{{/if}}>${name}</option>
+    </script>
+
+    <!-- users tab templates -->
+    <script id="user-template" type="text/x-jquery-tmpl">
+        <div class="user">
+            <div class="attributes">
+                <span class="name">${name}</span>
+                <span class="email">${email_address}</span>
+            </div>
+            <img src="${gravatar}" />
+            <div class="clear"></div>
+        </div>
+    </script>
+
+    <!-- files tab templates -->
+    <script id="file-template" type="text/x-jquery-tmpl">
+        <div class="file">
+            <div class="attributes">
+                <span class="filename">
+                    <a href="${full_url}">${name}</a> (${size} kb)
+                </span>
+                <span class="uploaded-by">${user.name} at ${timestamp}</span>
+            </div>
+            <a href="${full_url}" class="download"><img src="images/files_large.png" /></a>
+            <div class="clear"></div>
+        </div>
+    </script>
+</head>
+<body>
+
+<div class="blank-slate no-api" style="display: none;">
+    <img src="images/logo.png" />
+    <span>To start, we'll need your Campfire account info</span>
+    <button class="white">Fill in account info</button>
+</div>
+
+<div class="blank-slate no-rooms" style="display: none;">
+    <img src="images/logo.png" />
+    <span>You are not in any Campfire rooms</span>
+    <button class="white">Create a room</button>
+</div>
+
+<div class="viewer">
+    <div class="rooms">
+        <div class="header">
+            <img src="images/logo.png" />
+        </div>
+        <div class="options">Options</div>
+        <div class="scroll-up"></div>
+        <div class="list">
+            <div class="scrollbox"></div>
+        </div>
+        <div class="scroll-down"></div>
+    </div>
+
+    <div class="content join-room" style="display: none;">
+        <span>Click on a room to join</span>
+    </div>
+
+    <div class="content joining" style="display: none;"></div>
+
+    <div class="content main" style="display: none;">
+        <ul class="tabs">
+            <li class="chat selected" tab="chat">Chat</li>
+            <li class="users" tab="users">Users</li>
+            <li class="files" tab="files">Files</li>
+            <li class="search" tab="search">Search</li>
+        </ul>
+        <a href="#" class="leave-room">Leave</a>
+        <div class="clear"></div>
+        <div class="tab-content chat">
+            <div class="group">
+                <div class="info filters">
+                    <select class="users-filter"></select>
+                    <select class="types-filter"></select>
+                    <a href="#" class="reset-filters">reset</a>
+                </div>
+                <div class="overhang"></div>
+                <div class="conversation"></div>
+                <div class="clear"></div>
+            </div>
+            <div class="send">
+                <textarea rows="2" cols="58"></textarea>
+                <button class="white">Send</button>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="tab-content users" style="display: none;">
+            <div class="group">
+                <div class="info title">
+                    Users present in room
+                </div>
+                <div class="overhang"></div>
+                <div class="list"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="tab-content files" style="display: none;">
+            <div class="group">
+                <div class="info title">
+                    5 most recent uploads
+                </div>
+                <div class="overhang"></div>
+                <div class="list"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="tab-content search" style="display: none;">
+            <div class="group">
+                <div class="info input">
+                    <input type="text" class="search-messages" />
+                </div>
+                <div class="overhang"></div>
+                <div class="results"></div>
+                <div class="loading" style="display: none;"></div>
+                <div class="no-results" style="display: none;">No messages found</div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

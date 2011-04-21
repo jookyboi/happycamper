@@ -531,8 +531,11 @@ happycamper.rooms = function() {
                     body: message
                 }
             }, function() {
-               // upon callback, refresh the data. background will auto-refresh the chat
-                getBackground().happycamper.background.refreshRoom(openRoomId);
+                // upon callback, refresh the data. background will auto-refresh the chat
+                setTimeout(function() {
+                    // need to add this artificial delay for campfire servers to catch up
+                    getBackground().happycamper.background.refreshRoom(openRoomId);
+                }, 500);
             });
 
             $sendBox.val("").focus();
