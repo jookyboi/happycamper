@@ -9,5 +9,4 @@ The project website contains screenshots and technical documentation about Happy
 
 ## Chrome Extension
 
-The latest released version of Happy Camper can be downloaded from:
-[Chrome Extension Gallery](https://chrome.google.com/extensions/detail/coimkphjagggmdkinhgjanjkekcjmpoe).
+The latest released version of Happy Camper can be downloaded from the [Chrome Extension Gallery](https://chrome.google.com/extensions/detail/coimkphjagggmdkinhgjanjkekcjmpoe).
