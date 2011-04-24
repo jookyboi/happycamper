@@ -4,10 +4,8 @@ Happy Camper is a full-featured chat client for [Campfire](http://campfirenow.co
 
 ## Project Website
 
-The project website contains screenshots and technical documentation about Happy Camper's development. It can be found at:
-[http://roowii.net/projects/happy-camper](http://roowii.net/projects/happy-camper).
+The project website contains screenshots and technical documentation about Happy Camper's development. It can be found at [http://roowii.net/projects/happy-camper](http://roowii.net/projects/happy-camper).
 
 ## Chrome Extension
 
-The latest released version of Happy Camper can be downloaded from:
-[Chrome Extension Gallery](https://chrome.google.com/extensions/detail/coimkphjagggmdkinhgjanjkekcjmpoe).
+The latest released version of Happy Camper can be downloaded from the [Chrome Extension Gallery](https://chrome.google.com/extensions/detail/coimkphjagggmdkinhgjanjkekcjmpoe).
